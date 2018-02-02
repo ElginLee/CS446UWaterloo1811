@@ -9,6 +9,7 @@
     <string name="status_disconnected">Disconnected</string>
     <string name="status_searching">Searching</string>
     <string name="status_connected">Connected</string>
+    <string name="status_broadcast">Broadcasting</string>
 
     <string name="game_choice">You chose %s</string>
 

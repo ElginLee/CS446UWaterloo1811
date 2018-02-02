@@ -36,6 +36,8 @@ import com.google.android.gms.nearby.connection.Strategy;
 /** Activity controlling the Rock Paper Scissors game */
 public class MainActivity extends AppCompatActivity {
 
+    private String opponentEndpointId;
+
     private static final String TAG = "RockPaperScissors";
 
     private static final String[] REQUIRED_PERMISSIONS =
@@ -69,108 +71,17 @@ public class MainActivity extends AppCompatActivity {
     // Our randomly generated name
     private final String codeName = CodenameGenerator.generate();
 
-    private String opponentEndpointId;
-    private String opponentName;
-    private int opponentScore;
-    private GameChoice opponentChoice;
-
-    private int myScore;
-    private GameChoice myChoice;
-
-    private Button findOpponentButton;
-    private Button disconnectButton;
-    private Button rockButton;
-    private Button paperButton;
-    private Button scissorsButton;
-
-    private TextView opponentText;
-    private TextView statusText;
-    private TextView scoreText;
-
-    // Callbacks for receiving payloads
-    private final PayloadCallback payloadCallback =
-            new PayloadCallback() {
-                @Override
-                public void onPayloadReceived(String endpointId, Payload payload) {
-                    opponentChoice = GameChoice.valueOf(new String(payload.asBytes(), UTF_8));
-                }
-
-                @Override
-                public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
-                    if (update.getStatus() == Status.SUCCESS && myChoice != null && opponentChoice != null) {
-                        finishRound();
-                    }
-                }
-            };
-
-    // Callbacks for finding other devices
-    private final EndpointDiscoveryCallback endpointDiscoveryCallback =
-            new EndpointDiscoveryCallback() {
-                @Override
-                public void onEndpointFound(String endpointId, DiscoveredEndpointInfo info) {
-                    Log.i(TAG, "onEndpointFound: endpoint found, connecting");
-                    connectionsClient.requestConnection(codeName, endpointId, connectionLifecycleCallback);
-                }
-
-                @Override
-                public void onEndpointLost(String endpointId) {}
-            };
-
-    // Callbacks for connections to other devices
-    private final ConnectionLifecycleCallback connectionLifecycleCallback =
-            new ConnectionLifecycleCallback() {
-                @Override
-                public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
-                    Log.i(TAG, "onConnectionInitiated: accepting connection");
-                    connectionsClient.acceptConnection(endpointId, payloadCallback);
-                    opponentName = connectionInfo.getEndpointName();
-                }
-
-                @Override
-                public void onConnectionResult(String endpointId, ConnectionResolution result) {
-                    if (result.getStatus().isSuccess()) {
-                        Log.i(TAG, "onConnectionResult: connection successful");
-
-                        connectionsClient.stopDiscovery();
-                        connectionsClient.stopAdvertising();
-
-                        opponentEndpointId = endpointId;
-                        setOpponentName(opponentName);
-                        setStatusText(getString(R.string.status_connected));
-                        setButtonState(true);
-                    } else {
-                        Log.i(TAG, "onConnectionResult: connection failed");
-                    }
-                }
-
-                @Override
-                public void onDisconnected(String endpointId) {
-                    Log.i(TAG, "onDisconnected: disconnected from the opponent");
-                    resetGame();
-                }
-            };
-
     @Override
     protected void onCreate(@Nullable Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.activity_main);
 
-        findOpponentButton = findViewById(R.id.find_opponent);
-        disconnectButton = findViewById(R.id.disconnect);
-        rockButton = findViewById(R.id.rock);
-        paperButton = findViewById(R.id.paper);
-        scissorsButton = findViewById(R.id.scissors);
-
-        opponentText = findViewById(R.id.opponent_name);
-        statusText = findViewById(R.id.status);
-        scoreText = findViewById(R.id.score);
-
-        TextView nameView = findViewById(R.id.name);
+        TextView nameView = findViewById(R.id.codename);
         nameView.setText(getString(R.string.codename, codeName));
-
+        TextView statusView = findViewById(R.id.status);
         connectionsClient = Nearby.getConnectionsClient(this);
 
-        resetGame();
+        //resetGame();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -186,8 +97,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         connectionsClient.stopAllEndpoints();
-        resetGame();
-
         super.onStop();
     }
 
@@ -223,29 +132,16 @@ public class MainActivity extends AppCompatActivity {
         recreate();
     }
 
-    /** Finds an opponent to play the game with using Nearby Connections. */
-    public void findOpponent(View view) {
+    public void hostSession(View view) {
         startAdvertising();
+        TextView statusView = findViewById(R.id.status);
+        statusView.setText((getString(R.string.status_broadcast)));
+    }
+
+    public void joinSession(View view) {
         startDiscovery();
-        setStatusText(getString(R.string.status_searching));
-        findOpponentButton.setEnabled(false);
-    }
-
-    /** Disconnects from the opponent and reset the UI. */
-    public void disconnect(View view) {
-        connectionsClient.disconnectFromEndpoint(opponentEndpointId);
-        resetGame();
-    }
-
-    /** Sends a {@link GameChoice} to the other player. */
-    public void makeMove(View view) {
-        if (view.getId() == R.id.rock) {
-            sendGameChoice(GameChoice.ROCK);
-        } else if (view.getId() == R.id.paper) {
-            sendGameChoice(GameChoice.PAPER);
-        } else if (view.getId() == R.id.scissors) {
-            sendGameChoice(GameChoice.SCISSORS);
-        }
+        TextView statusView = findViewById(R.id.status);
+        statusView.setText((getString(R.string.status_searching)));
     }
 
     /** Starts looking for other players using Nearby Connections. */
@@ -262,84 +158,77 @@ public class MainActivity extends AppCompatActivity {
                 codeName, getPackageName(), connectionLifecycleCallback, new AdvertisingOptions(STRATEGY));
     }
 
-    /** Wipes all game state and updates the UI accordingly. */
-    private void resetGame() {
-        opponentEndpointId = null;
-        opponentName = null;
-        opponentChoice = null;
-        opponentScore = 0;
-        myChoice = null;
-        myScore = 0;
+    // Callbacks for finding other devices
+    private final EndpointDiscoveryCallback endpointDiscoveryCallback =
+            new EndpointDiscoveryCallback() {
+                @Override
+                public void onEndpointFound(String endpointId, DiscoveredEndpointInfo info) {
+                    Log.i(TAG, "onEndpointFound: endpoint found, connecting");
+                    connectionsClient.requestConnection(codeName, endpointId, connectionLifecycleCallback);
+                }
 
-        setOpponentName(getString(R.string.no_opponent));
-        setStatusText(getString(R.string.status_disconnected));
-        updateScore(myScore, opponentScore);
-        setButtonState(false);
+                @Override
+                public void onEndpointLost(String endpointId) {}
+            };
+
+    // Callbacks for connections to other devices
+    private final ConnectionLifecycleCallback connectionLifecycleCallback =
+            new ConnectionLifecycleCallback() {
+                @Override
+                public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
+                    Log.i(TAG, "onConnectionInitiated: accepting connection");
+                    connectionsClient.acceptConnection(endpointId, payloadCallback);
+                }
+
+                @Override
+                public void onConnectionResult(String endpointId, ConnectionResolution result) {
+                    if (result.getStatus().isSuccess()) {
+                        Log.i(TAG, "onConnectionResult: connection successful");
+                        opponentEndpointId = endpointId;
+                        //connectionsClient.stopDiscovery();
+                        //connectionsClient.stopAdvertising();
+                    } else {
+                        Log.i(TAG, "onConnectionResult: connection failed");
+                    }
+                }
+
+                @Override
+                public void onDisconnected(String endpointId) {
+                    Log.i(TAG, "onDisconnected: disconnected from the opponent");
+                }
+            };
+
+    // Callbacks for receiving payloads
+    private final PayloadCallback payloadCallback =
+            new PayloadCallback() {
+                @Override
+                public void onPayloadReceived(String endpointId, Payload payload) {
+                    TextView statusView = findViewById(R.id.status);
+                    statusView.setText(new String(payload.asBytes(), UTF_8));
+                    //opponentChoice = GameChoice.valueOf(new String(payload.asBytes(), UTF_8));
+                }
+
+                @Override
+                public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
+                    //if (update.getStatus() == Status.SUCCESS && myChoice != null && opponentChoice != null) {
+                        //finishRound();
+                    //}
+
+                }
+            };
+    /** Sends the user's selection of rock, paper, or scissors to the opponent. */
+    public void sendInformation(View view) {
+        String test = "Paper";
+        connectionsClient.sendPayload(
+                opponentEndpointId, Payload.fromBytes(test.getBytes(UTF_8)));
+        TextView statusView = findViewById(R.id.status);
+        statusView.setText((getString(R.string.choice_paper)));
     }
 
     /** Sends the user's selection of rock, paper, or scissors to the opponent. */
-    private void sendGameChoice(GameChoice choice) {
-        myChoice = choice;
-        connectionsClient.sendPayload(
-                opponentEndpointId, Payload.fromBytes(choice.name().getBytes(UTF_8)));
-
-        setStatusText(getString(R.string.game_choice, choice.name()));
-        // No changing your mind!
-        setGameChoicesEnabled(false);
-    }
-
-    /** Determines the winner and update game state/UI after both players have chosen. */
-    private void finishRound() {
-        if (myChoice.beats(opponentChoice)) {
-            // Win!
-            setStatusText(getString(R.string.win_message, myChoice.name(), opponentChoice.name()));
-            myScore++;
-        } else if (myChoice == opponentChoice) {
-            // Tie, same choice by both players
-            setStatusText(getString(R.string.tie_message, myChoice.name()));
-        } else {
-            // Loss
-            setStatusText(getString(R.string.loss_message, myChoice.name(), opponentChoice.name()));
-            opponentScore++;
-        }
-
-        myChoice = null;
-        opponentChoice = null;
-
-        updateScore(myScore, opponentScore);
-
-        // Ready for another round
-        setGameChoicesEnabled(true);
-    }
-
-    /** Enables/disables buttons depending on the connection status. */
-    private void setButtonState(boolean connected) {
-        findOpponentButton.setEnabled(true);
-        findOpponentButton.setVisibility(connected ? View.GONE : View.VISIBLE);
-        disconnectButton.setVisibility(connected ? View.VISIBLE : View.GONE);
-
-        setGameChoicesEnabled(connected);
-    }
-
-    /** Enables/disables the rock, paper, and scissors buttons. */
-    private void setGameChoicesEnabled(boolean enabled) {
-        rockButton.setEnabled(enabled);
-        paperButton.setEnabled(enabled);
-        scissorsButton.setEnabled(enabled);
-    }
-
-    /** Shows a status message to the user. */
-    private void setStatusText(String text) {
-        statusText.setText(text);
-    }
-
-    /** Updates the opponent name on the UI. */
-    private void setOpponentName(String opponentName) {
-        opponentText.setText(getString(R.string.opponent_name, opponentName));
-    }
-
-    /** Updates the running score ticker. */
-    private void updateScore(int myScore, int opponentScore) {
-        scoreText.setText(getString(R.string.game_score, myScore, opponentScore));
+    public void resetInformation(View view) {
+        String test = "-";
+        TextView statusView = findViewById(R.id.status);
+        statusView.setText(test);
     }
 }
