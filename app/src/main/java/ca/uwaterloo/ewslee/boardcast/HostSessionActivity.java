@@ -49,13 +49,6 @@ import java.util.List;
 
 public class HostSessionActivity extends AppCompatActivity {
 
-    // Create a List from String Array elements
-    final List<String> connectionsList = new ArrayList<String>();
-
-    // Create an ArrayAdapter from List
-    final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
-            (this, android.R.layout.simple_list_item_1, connectionsList);
-
     private String connectionsEndpointId;
 
     private static final String TAG = "BoardCase";
@@ -79,6 +72,12 @@ public class HostSessionActivity extends AppCompatActivity {
     // Our randomly generated name
     private final String codeName = CodenameGenerator.generate();
 
+    private ListView lv;
+
+    private List<String> connectionsList;
+
+    private  ArrayAdapter<String> arrayAdapter;
+
     protected void onCreate(@Nullable Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.host_session);
@@ -88,6 +87,17 @@ public class HostSessionActivity extends AppCompatActivity {
         TextView statusView = findViewById(R.id.statusLabel);
         connectionsClient = Nearby.getConnectionsClient(this);
         configureHostButton();
+
+        lv = (ListView) findViewById(R.id.connectionsListView);
+        // Create a List from String Array elements
+        connectionsList = new ArrayList<String>();
+
+        // Create an ArrayAdapter from List
+        arrayAdapter = new ArrayAdapter<String>
+            (this, android.R.layout.simple_list_item_1, connectionsList);
+
+        lv.setAdapter(arrayAdapter);
+
     }
 
     private void configureHostButton(){
@@ -197,8 +207,8 @@ public class HostSessionActivity extends AppCompatActivity {
                 public void onPayloadReceived(String endpointId, Payload payload) {
                     //TextView statusView = findViewById(R.id.statusLabel);
                     //statusView.setText(new String(payload.asBytes(), UTF_8));
-                    connectionsList.add(new String(payload.asBytes(), UTF_8));
-                    arrayAdapter.notifyDataSetChanged();
+                    //connectionsList.add(new String(payload.asBytes(), UTF_8));
+                    //arrayAdapter.notifyDataSetChanged();
                     //opponentChoice = GameChoice.valueOf(new String(payload.asBytes(), UTF_8));
                 }
 
