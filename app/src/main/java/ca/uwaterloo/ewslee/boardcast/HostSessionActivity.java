@@ -1,7 +1,10 @@
 package ca.uwaterloo.ewslee.boardcast;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import static java.nio.charset.StandardCharsets.UTF_8;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -15,7 +18,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +39,22 @@ import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate.Status;
 import com.google.android.gms.nearby.connection.Strategy;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Created by Elgin on 3/2/2018.
+ */
+
+public class HostSessionActivity extends AppCompatActivity {
+
+    // Create a List from String Array elements
+    final List<String> connectionsList = new ArrayList<String>();
+
+    // Create an ArrayAdapter from List
+    final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
+            (this, android.R.layout.simple_list_item_1, connectionsList);
 
     private String connectionsEndpointId;
 
@@ -59,17 +79,26 @@ public class MainActivity extends AppCompatActivity {
     // Our randomly generated name
     private final String codeName = CodenameGenerator.generate();
 
-    @Override
     protected void onCreate(@Nullable Bundle bundle) {
         super.onCreate(bundle);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.host_session);
 
-        TextView nameView = findViewById(R.id.codename);
+        TextView nameView = findViewById(R.id.codenameLabel);
         nameView.setText(getString(R.string.codename, codeName));
-        TextView statusView = findViewById(R.id.status);
+        TextView statusView = findViewById(R.id.statusLabel);
         connectionsClient = Nearby.getConnectionsClient(this);
+        configureHostButton();
+    }
 
-        //resetGame();
+    private void configureHostButton(){
+        Button hostBtn = (Button) findViewById(R.id.hostBtn);
+        hostBtn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                hostSession(view);
+            }
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -83,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        connectionsClient.stopAdvertising();
         connectionsClient.stopAllEndpoints();
         super.onStop();
     }
@@ -122,24 +150,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void hostSession(View view) {
         startAdvertising();
-        TextView statusView = findViewById(R.id.status);
+        TextView statusView = findViewById(R.id.statusLabel);
         statusView.setText((getString(R.string.status_broadcast)));
-    }
-
-    public void joinSession(View view) {
-        ProgressBar spinner = (ProgressBar)findViewById(R.id.progressBar);
-        spinner.setVisibility(View.VISIBLE);
-        spinner.bringToFront();
-        startDiscovery();
-        TextView statusView = findViewById(R.id.status);
-        statusView.setText((getString(R.string.status_searching)));
-    }
-
-    /** Starts looking for other players using Nearby Connections. */
-    private void startDiscovery() {
-        // Note: Discovery may fail. To keep this demo simple, we don't handle failures.
-        connectionsClient.startDiscovery(
-                getPackageName(), endpointDiscoveryCallback, new DiscoveryOptions(STRATEGY));
     }
 
     /** Broadcasts our presence using Nearby Connections so other players can find us. */
@@ -149,29 +161,13 @@ public class MainActivity extends AppCompatActivity {
                 codeName, getPackageName(), connectionLifecycleCallback, new AdvertisingOptions(STRATEGY));
     }
 
-    // Callbacks for finding other devices
-    private final EndpointDiscoveryCallback endpointDiscoveryCallback =
-            new EndpointDiscoveryCallback() {
-                @Override
-                public void onEndpointFound(String endpointId, DiscoveredEndpointInfo info) {
-                    Log.i(TAG, "onEndpointFound: endpoint found, connecting");
-                    TextView statusView = findViewById(R.id.status);
-                    statusView.setText("Connecting to: " + info.getEndpointName());
-                    connectionsClient.requestConnection(codeName, endpointId, connectionLifecycleCallback);
-                }
-                @Override
-                public void onEndpointLost(String endpointId) {
-
-                }
-            };
-
     // Callbacks for connections to other devices
     private final ConnectionLifecycleCallback connectionLifecycleCallback =
             new ConnectionLifecycleCallback() {
                 @Override
                 public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
                     Log.i(TAG, "onConnectionInitiated: accepting connection");
-                    TextView statusView = findViewById(R.id.status);
+                    TextView statusView = findViewById(R.id.statusLabel);
                     statusView.setText("Connection from: " + connectionInfo.getEndpointName());
                     connectionsClient.acceptConnection(endpointId, payloadCallback);
                 }
@@ -179,14 +175,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onConnectionResult(String endpointId, ConnectionResolution result) {
                     if (result.getStatus().isSuccess()) {
-                        TextView statusView = findViewById(R.id.status);
-                        statusView.setText("Connected");
-                        ProgressBar spinner = (ProgressBar)findViewById(R.id.progressBar);
-                        spinner.setVisibility(View.INVISIBLE);
+                        TextView statusView = findViewById(R.id.statusLabel);
+                        statusView.setText(endpointId + " Connected");
                         Log.i(TAG, "onConnectionResult: connection successful");
                         connectionsEndpointId = endpointId;
-                        //connectionsClient.stopDiscovery();
-                        //connectionsClient.stopAdvertising();
                     } else {
                         Log.i(TAG, "onConnectionResult: connection failed");
                     }
@@ -203,32 +195,19 @@ public class MainActivity extends AppCompatActivity {
             new PayloadCallback() {
                 @Override
                 public void onPayloadReceived(String endpointId, Payload payload) {
-                    TextView statusView = findViewById(R.id.status);
-                    statusView.setText(new String(payload.asBytes(), UTF_8));
+                    //TextView statusView = findViewById(R.id.statusLabel);
+                    //statusView.setText(new String(payload.asBytes(), UTF_8));
+                    connectionsList.add(new String(payload.asBytes(), UTF_8));
+                    arrayAdapter.notifyDataSetChanged();
                     //opponentChoice = GameChoice.valueOf(new String(payload.asBytes(), UTF_8));
                 }
 
                 @Override
                 public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
                     //if (update.getStatus() == Status.SUCCESS && myChoice != null && opponentChoice != null) {
-                        //finishRound();
+                    //finishRound();
                     //}
 
                 }
             };
-    /** Sends the user's selection of rock, paper, or scissors to the opponent. */
-    public void sendInformation(View view) {
-        String test = "Paper";
-        connectionsClient.sendPayload(
-                connectionsEndpointId, Payload.fromBytes(test.getBytes(UTF_8)));
-        TextView statusView = findViewById(R.id.status);
-        statusView.setText((getString(R.string.choice_paper)));
-    }
-
-    /** Sends the user's selection of rock, paper, or scissors to the opponent. */
-    public void resetInformation(View view) {
-        String test = "-";
-        TextView statusView = findViewById(R.id.status);
-        statusView.setText(test);
-    }
 }
