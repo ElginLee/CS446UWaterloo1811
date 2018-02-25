@@ -20,6 +20,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
         configureHostButton();
         configureJoinButton();
+        configurePollButton();
     }
 
     private void configureHostButton(){
@@ -39,6 +40,17 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainMenuActivity.this,JoinSessionActivity.class));
+            }
+        });
+    }
+
+    private void configurePollButton(){
+        Button hostBtn = (Button) findViewById(R.id.createPollBtn);
+        hostBtn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainMenuActivity.this,tempActivity.class));
             }
         });
     }
