@@ -23,9 +23,11 @@ public class StudentViewModel extends AndroidViewModel {
 
         appDatabase = AppDatabase.getAppDatabase(this.getApplication());
         studentList = appDatabase.studentDao().getStudentList(1);
+
     }
 
     public LiveData<List<Student>> getStudentList() {
         return studentList;
     }
+
 }

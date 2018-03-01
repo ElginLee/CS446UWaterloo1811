@@ -1,5 +1,6 @@
 package ca.uwaterloo.ewslee.boardcast;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import data.StudentViewModel;
+import data.model.Student;
 
 /**
  * Created by kianl on 2/23/2018.
@@ -17,13 +22,18 @@ import java.util.ArrayList;
 
 public class WaitingScreenActivity extends AppCompatActivity {
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
+        StudentViewModel studentViewModel;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.waiting_screen);
         ListView joinedStudent = (ListView)findViewById(R.id.StudentConnectionList);
         ArrayList<String> studentNameList = new ArrayList<String>();
-        for(int i = 0; i < 16; i++) {
-            studentNameList.add(CodenameGenerator.generate());
+        List<Student> studentList;
+        studentViewModel = ViewModelProviders.of(this).get(StudentViewModel.class);
+        studentList = studentViewModel.getStudentList().getValue();
+        for(int i = 0; i < studentList.size(); i++) {
+                studentNameList.add(studentList.get(i).getStudentId());
         }
         ArrayAdapter<String> arrayAdapter =
                 new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, studentNameList);

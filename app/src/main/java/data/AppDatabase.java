@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import java.util.Calendar;
 import java.util.Date;
 
+import ca.uwaterloo.ewslee.boardcast.CodenameGenerator;
 import data.Dao.SessionDao;
 import data.Dao.StudentDao;
 import data.model.Session;
@@ -77,13 +78,11 @@ public abstract class AppDatabase extends RoomDatabase {
             sessionDao.insert(session);
             session = new Session(2,"234",c);
             sessionDao.insert(session);
-
-            Student student = new Student(1,"abc");
-            studentDao.insert(student);
-            student = new Student(1,"1123");
-            studentDao.insert(student);
-            student = new Student(1,"asd");
-            studentDao.insert(student);
+            Student student;
+            for (int i = 0 ; i < 16; i ++){
+                student = new Student(1, CodenameGenerator.generate());
+                studentDao.insert(student);
+            }
             return null;
         }
     }

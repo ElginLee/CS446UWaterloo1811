@@ -29,5 +29,8 @@ public interface StudentDao {
     @Query("SELECT * FROM Student where sessionId = :sessionId")
     LiveData<List<Student>> getStudentList(int sessionId);
 
+    @Query("SELECT * FROM Student where sessionId = :sessionId")
+    List<Student> getsList(int sessionId);
+
 }
 

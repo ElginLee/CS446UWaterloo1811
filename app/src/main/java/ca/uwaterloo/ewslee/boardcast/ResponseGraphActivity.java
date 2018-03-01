@@ -18,45 +18,41 @@ import java.util.Random;
  */
 
 public class ResponseGraphActivity extends AppCompatActivity {
+    GraphView graph;
     protected void onCreate(@Nullable Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.response_graph);
-        drawGraph();
         final Handler handler = new Handler();
         final Runnable r = new Runnable() {
             public void run() {
-                GraphView graph = (GraphView) findViewById(R.id.graph);
+                graph = (GraphView) findViewById(R.id.graph);
                 graph.removeAllSeries();
                 handler.postDelayed(this, 5000);
                 drawGraph();
             }
         };
-        handler.postDelayed(r, 5000);
+        handler.postDelayed(r, 0000);
     }
 
     private void drawGraph(){
-        int x =  new Random().nextInt(5 + 1);
-        GraphView graph = (GraphView) findViewById(R.id.graph);
+        graph = (GraphView) findViewById(R.id.graph);
         BarGraphSeries<DataPoint> series = new BarGraphSeries<>(new DataPoint[] {
-                new DataPoint(1,x),
+                new DataPoint(0,0),
+                new DataPoint(1,new Random().nextInt(5 + 1)),
                 new DataPoint(2, new Random().nextInt(5 + 1)),
                 new DataPoint(3, new Random().nextInt(5 + 1)),
                 new DataPoint(4, new Random().nextInt(5 + 1))
         });
         series.setSpacing(10);
         graph.addSeries(series);
-        graph.getGridLabelRenderer().setNumHorizontalLabels(4);
 
-        graph.getViewport().setXAxisBoundsManual(true);
+// draw values on top
         graph.getViewport().setMinX(0);
         graph.getViewport().setMaxX(5);
 
 
-        graph.getViewport().setYAxisBoundsManual(true);
-        graph.getViewport().setMinY(0);
-
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
-        staticLabelsFormatter.setHorizontalLabels(new String[] {"a","b", "c","d"});
+        staticLabelsFormatter.setHorizontalLabels(new String[] {"","a","b", "c","d", ""});
         graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
 // draw values on top
