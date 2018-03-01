@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CS446UWaterloo1811.iml" filepath="$PROJECT_DIR$/CS446UWaterloo1811.iml" />
+      <module fileurl="file://C:\Users\#YEOGUOKUAN\Desktop\CS446UWaterloo1811-master\CS446UWaterloo1811.iml" filepath="C:\Users\#YEOGUOKUAN\Desktop\CS446UWaterloo1811-master\CS446UWaterloo1811.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CS446UWaterloo1811-master.iml" filepath="$PROJECT_DIR$/CS446UWaterloo1811-master.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
