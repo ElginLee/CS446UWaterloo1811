@@ -20,7 +20,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
         configureHostButton();
         configureJoinButton();
-        configurePollButton();
+        configureDrawButton();
     }
 
     private void configureHostButton(){
@@ -43,14 +43,13 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         });
     }
-
-    private void configurePollButton(){
-        Button hostBtn = (Button) findViewById(R.id.createPollBtn);
-        hostBtn.setOnClickListener(new View.OnClickListener(){
+    private void configureDrawButton(){
+        Button drawBtn = (Button) findViewById(R.id.draw_button);
+        drawBtn.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainMenuActivity.this,tempActivity.class));
+                startActivity(new Intent(MainMenuActivity.this,DrawingBoard.class));
             }
         });
     }
