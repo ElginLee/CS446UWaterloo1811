@@ -28,6 +28,11 @@
         </activity>
         <activity android:name=".DrawingBoard">
         </activity>
+        <activity android:name=".WaitingScreenActivity">
+             </activity>
+             <activity android:name=".ResponseGraphActivity">
+               </activity>
+                <activity android:name=".tempActivity"></activity>
     </application>
 
 </manifest>

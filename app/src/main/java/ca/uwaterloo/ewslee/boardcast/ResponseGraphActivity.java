@@ -27,7 +27,7 @@ public class ResponseGraphActivity extends AppCompatActivity {
             public void run() {
                 graph = (GraphView) findViewById(R.id.graph);
                 graph.removeAllSeries();
-                handler.postDelayed(this, 5000);
+                handler.postDelayed(this, 2000);
                 drawGraph();
             }
         };
