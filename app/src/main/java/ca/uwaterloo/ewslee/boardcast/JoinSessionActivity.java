@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.app.Dialog;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -38,6 +39,8 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
+
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -81,6 +84,7 @@ public class JoinSessionActivity extends AppCompatActivity{
 
         lv.setAdapter(arrayAdapter);
 
+        checkGooglePlayServices();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -128,6 +132,19 @@ public class JoinSessionActivity extends AppCompatActivity{
             }
         }
         return true;
+    }
+
+    private boolean checkGooglePlayServices() {
+        final int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (status != ConnectionResult.SUCCESS) {
+            Log.e(TAG, GooglePlayServicesUtil.getErrorString(status));
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, 1);
+            dialog.show();
+            return false;
+        } else {
+            Log.i(TAG, GooglePlayServicesUtil.getErrorString(status));
+            return true;
+        }
     }
 
     /** Handles user acceptance (or denial) of our permission request. */
@@ -230,9 +247,10 @@ public class JoinSessionActivity extends AppCompatActivity{
                             @Override
                             public void onPayloadReceived(String endpointId, Payload payload) {
                                 if (payload.getType() == Payload.Type.BYTES) {
-                                    log("onPayloadReceived: " + new String(payload.asBytes()));
+                                    receiveMessage(endpointId,payload);
                                 }
                             }
+
 
                             @Override
                             public void onPayloadTransferUpdate(String endpointId, PayloadTransferUpdate update) {
@@ -280,6 +298,12 @@ public class JoinSessionActivity extends AppCompatActivity{
                 });
     }
 
+
+    private void receiveMessage(String endpointId, Payload payload){
+        log("onPayloadReceived: " + new String(payload.asBytes()));
+        initStudentLayout();
+    }
+
     private void sendMessage(String message) {
         log("About to send message: " + message);
         Nearby.Connections.sendPayload(mGoogleApiClient, mRemoteHostEndpoint, Payload.fromBytes(message.getBytes(Charset.forName("UTF-8"))));
@@ -304,8 +328,28 @@ public class JoinSessionActivity extends AppCompatActivity{
         });
     }
 
+    private void initStudentLayout() {
+        setContentView(R.layout.student_quiz);
+       mLogs = (TextView) findViewById(R.id.sessionlabel);
+
+        Button hostBtn = (Button) findViewById(R.id.sendMessageBtn);
+
+        hostBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mGoogleApiClient.isConnected()) {
+                    log("Not connected");
+                    return;
+                }
+
+                sendMessage("Hello, Things!");
+            }
+        });
+    }
+
     private void log(String message) {
         Log.i(TAG, message);
+        mLogs = (TextView) findViewById(R.id.sessionlabel);
         mLogs.setText(message + "\n" + mLogs.getText());
     }
 }
