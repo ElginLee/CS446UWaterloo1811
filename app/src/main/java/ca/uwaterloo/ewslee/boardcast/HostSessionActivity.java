@@ -41,13 +41,13 @@ import java.util.List;
  * Created by Elgin on 3/2/2018.
  */
 
-public class HostSessionActivity extends AppCompatActivity {
+public class HostSessionActivity extends AppCompatActivity implements QuestionSubject{
 
     private static final String TAG = "BoardCast";
 
     private GoogleApiClient mGoogleApiClient;
     private List<String> mRemotePeerEndpoints = new ArrayList<>();
-
+    private List<QuestionObserver> observerList = new ArrayList<>();
     private static final String[] REQUIRED_PERMISSIONS =
             new String[] {
                     Manifest.permission.BLUETOOTH,
@@ -242,5 +242,21 @@ public class HostSessionActivity extends AppCompatActivity {
     private void log(String message) {
         Log.i(TAG, message);
         mLogs.setText(message + "\n" + mLogs.getText());
+    }
+
+    public void registerObserver(QuestionObserver questionObserver){
+        if(!observerList.contains(questionObserver)) {
+            observerList.add(questionObserver);
+        }
+    }
+    public void removeObserver(QuestionObserver questionObserver){
+        if(observerList.contains(questionObserver)) {
+            observerList.remove(questionObserver);
+        }
+    }
+    public void notifyObservers(String message){
+        for (QuestionObserver observer: observerList) {
+            observer.sendMessage(message, mGoogleApiClient);
+        }
     }
 }
