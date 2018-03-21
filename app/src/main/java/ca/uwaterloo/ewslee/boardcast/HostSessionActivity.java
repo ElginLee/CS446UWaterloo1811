@@ -87,7 +87,8 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
 
             @Override
             public void onClick(View view) {
-                sendMessage("This is your host broadcasting");
+                //sendMessage("This is your host broadcasting");
+                notifyObservers("This is your host broadcasting");
             }
         });
     }
@@ -207,6 +208,9 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                                     if (!mRemotePeerEndpoints.contains(endpointId)) {
                                         mRemotePeerEndpoints.add(endpointId);
                                     }
+                                    Student newStud = new Student();
+                                    newStud.setDeviceID(endpointId);
+                                    registerObserver(newStud);
                                     log("Connected! (endpointId=" + endpointId + ")");
                                 } else {
                                     log("Connection to " + endpointId + " failed. Code: " + resolution.getStatus().getStatusCode());

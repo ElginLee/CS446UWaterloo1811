@@ -8,4 +8,5 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 public interface QuestionObserver {
     void sendMessage(String message, GoogleApiClient mGoogleApiClient);
+    void setDeviceID(String deviceID);
 }

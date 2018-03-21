@@ -11,7 +11,11 @@ import java.nio.charset.Charset;
  */
 
 public class Student implements QuestionObserver{
+    String deviceID;
     public void sendMessage(String message, GoogleApiClient mGoogleApiClient){
-        Nearby.Connections.sendPayload(mGoogleApiClient, message, Payload.fromBytes(message.getBytes(Charset.forName("UTF-8"))));
+        Nearby.Connections.sendPayload(mGoogleApiClient, deviceID, Payload.fromBytes(message.getBytes(Charset.forName("UTF-8"))));
+    }
+    public void setDeviceID(String deviceID){
+        this.deviceID = deviceID;
     }
 }
