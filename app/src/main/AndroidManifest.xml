@@ -3,11 +3,12 @@
     package="ca.uwaterloo.ewslee.boardcast">
 
     <!-- Required for Nearby Connections -->
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -16,23 +17,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainMenuActivity">
+        <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HostSessionActivity">
-        </activity>
-        <activity android:name=".JoinSessionActivity">
-        </activity>
-        <activity android:name=".DrawingBoard">
-        </activity>
-        <activity android:name=".WaitingScreenActivity">
-             </activity>
-             <activity android:name=".ResponseGraphActivity">
-               </activity>
-                <activity android:name=".tempActivity"></activity>
+        <activity android:name=".MainMenuActivity"></activity>
+        <activity android:name=".HostSessionActivity"></activity>
+        <activity android:name=".JoinSessionActivity"></activity>
+        <activity android:name=".DrawingBoard"></activity>
+        <activity android:name=".WaitingScreenActivity"></activity>
+        <activity android:name=".ResponseGraphActivity"></activity>
+        <activity android:name=".tempActivity" />
     </application>
 
 </manifest>
