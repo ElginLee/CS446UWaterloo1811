@@ -51,7 +51,6 @@ public class MainMenuActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainMenuActivity.this, tempActivity.class));
             }
         });
     }

@@ -62,6 +62,7 @@ public class JoinSessionActivity extends AppCompatActivity{
     private ListView lv;
     private List<String> connectionsList;
     private ArrayAdapter<String> arrayAdapter;
+    private String studentID = "Harold Lim";
 
     private static final String[] REQUIRED_PERMISSIONS =
             new String[] {
@@ -102,13 +103,11 @@ public class JoinSessionActivity extends AppCompatActivity{
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected(@Nullable Bundle bundle) {
-                        log("onConnected: start discovering hosts to send connection requests");
                         startDiscovery();
                     }
 
                     @Override
                     public void onConnectionSuspended(int i) {
-                        log("onConnectionSuspended: " + i);
                         // Try to re-connect
                         mGoogleApiClient.reconnect();
                     }
@@ -116,7 +115,6 @@ public class JoinSessionActivity extends AppCompatActivity{
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        log("onConnectionFailed: " + connectionResult.getErrorCode());
                     }
                 })
                 .addApi(Nearby.CONNECTIONS_API)
@@ -172,7 +170,6 @@ public class JoinSessionActivity extends AppCompatActivity{
     @Override
     protected void onStart() {
         super.onStart();
-        log("onStart: connect");
         if (!hasPermissions(this, REQUIRED_PERMISSIONS)) {
             requestPermissions(REQUIRED_PERMISSIONS, 1);
         }
@@ -182,7 +179,6 @@ public class JoinSessionActivity extends AppCompatActivity{
     @Override
     protected void onStop() {
         super.onStop();
-        log("onStop: disconnect");
 
         if (mGoogleApiClient.isConnected()) {
             if (!mIsConnected || TextUtils.isEmpty(mRemoteHostEndpoint)) {
@@ -199,12 +195,10 @@ public class JoinSessionActivity extends AppCompatActivity{
     }
 
     private void startDiscovery() {
-        log("startDiscovery");
 
         Nearby.Connections.startDiscovery(mGoogleApiClient, "ca.uwaterloo.ewslee.boardcast", new EndpointDiscoveryCallback() {
                     @Override
                     public void onEndpointFound(String endpointId, DiscoveredEndpointInfo info) {
-                        log("onEndpointFound:" + endpointId + ":" + info.getEndpointName());
                         if(!connectionsList.contains(info.getEndpointName() + " " + endpointId)) {
                             connectionsList.add(info.getEndpointName() + " " + endpointId);
                             arrayAdapter.notifyDataSetChanged();
@@ -218,7 +212,6 @@ public class JoinSessionActivity extends AppCompatActivity{
                     public void onEndpointLost(String endpointId) {
                         // An endpoint that was previously available for connection is no longer.
                         // It may have stopped advertising, gone out of range, or lost connectivity.
-                        log("onEndpointLost:" + endpointId);
                     }
                 },
                 new DiscoveryOptions(Strategy.P2P_STAR)
@@ -227,9 +220,7 @@ public class JoinSessionActivity extends AppCompatActivity{
                     @Override
                     public void onResult(@NonNull Status status) {
                         if (status.isSuccess()) {
-                            log("Discovering...");
                         } else {
-                            log("Discovering failed: " + status.getStatusMessage() + "(" + status.getStatusCode() + ")");
                         }
                     }
                 });
@@ -240,7 +231,6 @@ public class JoinSessionActivity extends AppCompatActivity{
                 .requestConnection(mGoogleApiClient, null, endpointId, new ConnectionLifecycleCallback() {
                     @Override
                     public void onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
-                        log("onConnectionInitiated. Token: " + connectionInfo.getAuthenticationToken());
                         // Automatically accept the connection on both sides"
                         Nearby.Connections.acceptConnection(mGoogleApiClient, endpointId, new PayloadCallback() {
 
@@ -261,19 +251,19 @@ public class JoinSessionActivity extends AppCompatActivity{
 
                     @Override
                     public void onConnectionResult(String endpointId, ConnectionResolution resolution) {
-                        log("onConnectionResult:" + endpointId + ":" + resolution.getStatus());
                         if (resolution.getStatus().isSuccess()) {
-                            log("Connected successfully");
                             ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar2);
                             pb.setVisibility(View.INVISIBLE);
                             Nearby.Connections.stopDiscovery(mGoogleApiClient);
                             mRemoteHostEndpoint = endpointId;
                             mIsConnected = true;
+                            sendMessage("[N]="+studentID);
+                            lv.setVisibility(View.INVISIBLE);
+                            mLogs = (TextView) findViewById(R.id.sessionlabel);
+                            mLogs.setText("Connected");
                         } else {
                             if (resolution.getStatus().getStatusCode() == ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED) {
-                                log("The connection was rejected by one or both sides");
                             } else {
-                                log("Connection to " + endpointId + " failed. Code: " + resolution.getStatus().getStatusCode());
                             }
                             mIsConnected = false;
                         }
@@ -282,7 +272,6 @@ public class JoinSessionActivity extends AppCompatActivity{
                     @Override
                     public void onDisconnected(String endpointId) {
                         // We've been disconnected from this endpoint. No more data can be sent or received.
-                        log("onDisconnected: " + endpointId);
                     }
                 })
                 .setResultCallback(new ResultCallback<Status>() {
@@ -300,32 +289,16 @@ public class JoinSessionActivity extends AppCompatActivity{
 
 
     private void receiveMessage(String endpointId, Payload payload){
-        log("onPayloadReceived: " + new String(payload.asBytes()));
+        if(new String(payload.asBytes()).contains("[S]"))
         initStudentLayout();
     }
 
     private void sendMessage(String message) {
-        log("About to send message: " + message);
         Nearby.Connections.sendPayload(mGoogleApiClient, mRemoteHostEndpoint, Payload.fromBytes(message.getBytes(Charset.forName("UTF-8"))));
     }
 
     private void initLayout() {
         setContentView(R.layout.join_session);
-        mLogs = (TextView) findViewById(R.id.sessionlabel);
-
-        Button hostBtn = (Button) findViewById(R.id.checkBtn);
-
-        hostBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!mGoogleApiClient.isConnected()) {
-                    log("Not connected");
-                    return;
-                }
-
-                sendMessage("Hello, Things!");
-            }
-        });
     }
 
     private void initStudentLayout() {
@@ -338,7 +311,6 @@ public class JoinSessionActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 if (!mGoogleApiClient.isConnected()) {
-                    log("Not connected");
                     return;
                 }
 
@@ -347,9 +319,4 @@ public class JoinSessionActivity extends AppCompatActivity{
         });
     }
 
-    private void log(String message) {
-        Log.i(TAG, message);
-        mLogs = (TextView) findViewById(R.id.sessionlabel);
-        mLogs.setText(message + "\n" + mLogs.getText());
-    }
 }
