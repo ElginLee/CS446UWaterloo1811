@@ -22,6 +22,7 @@ public class MainMenuActivity extends AppCompatActivity {
         configureJoinButton();
         configureDrawButton();
         configurePollButton();
+        configureQuestionButton();
     }
 
     private void configureHostButton(){
@@ -50,7 +51,6 @@ public class MainMenuActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainMenuActivity.this, tempActivity.class));
             }
         });
     }
@@ -61,6 +61,16 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainMenuActivity.this,DrawingBoard.class));
+            }
+        });
+    }
+    private void configureQuestionButton(){
+        Button questionBtn = (Button) findViewById(R.id.question_button);
+        questionBtn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainMenuActivity.this, QuestionActivity.class));
             }
         });
     }

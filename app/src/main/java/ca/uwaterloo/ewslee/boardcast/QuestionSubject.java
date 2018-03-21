@@ -8,6 +8,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 public interface QuestionSubject {
     void registerObserver(QuestionObserver questionObserver);
-    void removeObserver(QuestionObserver questionObserver);
+    void removeObserver(String deviceID);
     void notifyObservers(String message);
 }
