@@ -319,18 +319,16 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                 Question currentQuestion = session.getQuestion(currentQn);
                 String text = currentQuestion.getStudentQuestion();
                 notifyObservers(text);
-                setContentView(R.layout.mc_graph);
-                initResponseScreen();
-                configureResultButton();
+                initResponseScreen(text);
+
             }
         });
     }
 
     GraphView graph;
-    private void initResponseScreen(){
-
+    private void initResponseScreen(String text){
+        setContentView(R.layout.mc_graph);
         Question currentQuestion = session.getQuestion(currentQn);
-        String text = currentQuestion.getStudentQuestion();
         String[] value = u1.splitPayload(text);
         value = u1.splitString(value[1]);
         String answer = currentQuestion.getCorrectAnswer();
@@ -346,6 +344,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
             }
         };
         handler.postDelayed(r, 0000);
+        configureResultButton();
     }
 
     private void displayQuestion(String [] value, String answer){
