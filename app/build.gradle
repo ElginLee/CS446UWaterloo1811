@@ -35,4 +35,6 @@ dependencies {
     compile "android.arch.persistence.room:runtime:1.0.0"
     annotationProcessor "android.arch.lifecycle:compiler:1.0.0"
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+    implementation 'com.android.support:design:26.1.0'
+    compile 'com.rom4ek:arcnavigationview:1.0.3'
 }
