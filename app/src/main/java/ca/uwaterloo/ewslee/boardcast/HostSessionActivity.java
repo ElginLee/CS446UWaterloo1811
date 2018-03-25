@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -66,12 +67,14 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.host_session);
+        setContentView(R.layout.host_main);
         configureHostButton();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     private void configureHostButton(){
-        Button hostBtn = (Button) findViewById(R.id.hostBtn);
+  /*      Button hostBtn = (Button) findViewById(R.id.hostBtn);
         hostBtn.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -84,7 +87,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                 configureStartQuizButton();
 
             }
-        });
+        });*/
     }
 
     protected  void startHosting(){

@@ -30,4 +30,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="hint_last_name">test</string>
 </resources>
