@@ -2,9 +2,12 @@ package ca.uwaterloo.ewslee.boardcast;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +22,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.Dialog;
@@ -41,6 +46,7 @@ import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.jjoe64.graphview.GraphView;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -58,11 +64,11 @@ public class JoinSessionActivity extends AppCompatActivity{
     private GoogleApiClient mGoogleApiClient;
     private String mRemoteHostEndpoint;
     private boolean mIsConnected;
-    private TextView mLogs;
     private ListView lv;
     private List<String> connectionsList;
     private ArrayAdapter<String> arrayAdapter;
     private String studentID = "Harold Lim";
+    private Utils u1 = new Utils();
 
     private static final String[] REQUIRED_PERMISSIONS =
             new String[] {
@@ -76,7 +82,7 @@ public class JoinSessionActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initLayout();
+        setContentView(R.layout.join_session);
 
         lv = (ListView) findViewById(R.id.sessionsAvailableListView);
         connectionsList = new ArrayList<String>();
@@ -236,8 +242,8 @@ public class JoinSessionActivity extends AppCompatActivity{
 
                             @Override
                             public void onPayloadReceived(String endpointId, Payload payload) {
-                                if (payload.getType() == Payload.Type.BYTES) {
-                                    receiveMessage(endpointId,payload);
+                                if (payload.getType() == Payload.Type.BYTES && endpointId !="ACK") {
+                                    recieveStatus(new String(payload.asBytes()), endpointId);
                                 }
                             }
 
@@ -259,7 +265,7 @@ public class JoinSessionActivity extends AppCompatActivity{
                             mIsConnected = true;
                             sendMessage("[N]="+studentID);
                             lv.setVisibility(View.INVISIBLE);
-                            mLogs = (TextView) findViewById(R.id.sessionlabel);
+                            TextView mLogs = (TextView) findViewById(R.id.sessionlabel);
                             mLogs.setText("Connected");
                         } else {
                             if (resolution.getStatus().getStatusCode() == ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED) {
@@ -288,24 +294,104 @@ public class JoinSessionActivity extends AppCompatActivity{
     }
 
 
-    private void receiveMessage(String endpointId, Payload payload){
-        if(new String(payload.asBytes()).contains("[S]"))
-        initStudentLayout();
+    private void recieveStatus(String value,String deviceID){
+        String[] result = u1.splitPayload(value);
+        if(result[0].contains("[Q]")){
+            initQuizLayout(result[1]);
+        }
+        else if(result[0].contains("[R]")){
+            initResultLayout(result[1]);
+        }
+        else if(result[0].contains("[E]")){
+            initFinalResultLayout(result[1]);
+        }
     }
 
     private void sendMessage(String message) {
         Nearby.Connections.sendPayload(mGoogleApiClient, mRemoteHostEndpoint, Payload.fromBytes(message.getBytes(Charset.forName("UTF-8"))));
     }
 
-    private void initLayout() {
-        setContentView(R.layout.join_session);
+    String question = "";
+    String studentAnswer = "";
+    int score = 0;
+    private void initResultLayout(String value) {
+        Graph g1 = new Graph();
+        final int[] results = u1.splitResults(value);
+        String [] output = u1.splitString(question);
+        String answer = u1.getAnswer(value);
+        if(studentAnswer.equals(answer)){
+            score++;
+        }
+        setContentView(R.layout.mc_graph);
+        displayQuestion(output, answer);
+        final Handler handler = new Handler();
+        final Runnable r = new Runnable() {
+            public void run() {
+
+                Graph g1 = new Graph();
+                GraphView graph = (GraphView) findViewById(R.id.graph);
+                graph.removeAllSeries();
+                g1.drawGraph(graph,results);
+            }
+        };
+        handler.postDelayed(r, 0000);
+        Button btn = (Button) findViewById(R.id.startBtn);
+        btn.setVisibility(View.INVISIBLE);
+
     }
 
-    private void initStudentLayout() {
-        setContentView(R.layout.student_quiz);
-       mLogs = (TextView) findViewById(R.id.sessionlabel);
+    private void displayQuestion(String [] value, String answer){
+        if(answer.equals("-1")){
+            TextView qn = (TextView) findViewById(R.id.question);
+            qn.setText(value[0]);
+            TextView c1 = (TextView) findViewById(R.id.radioButton1);
+            c1.setText("1. "+value[1]);
+            TextView c2 = (TextView) findViewById(R.id.radioButton2);
+            c2.setText("2. "+value[2]);
+            TextView c3 = (TextView) findViewById(R.id.radioButton3);
+            c3.setText("3. "+value[3]);
+            TextView c4 = (TextView) findViewById(R.id.radioButton4);
+            c4.setText("4. "+value[4]);
+        }
+        else {
+            TextView qn = (TextView) findViewById(R.id.question);
+            qn.setText(value[0]);
+            TextView c1 = (TextView) findViewById(R.id.choice1);
+            c1.setText("1. "+value[1]);
+            TextView c2 = (TextView) findViewById(R.id.choice2);
+            c2.setText("2. "+value[2]);
+            TextView c3 = (TextView) findViewById(R.id.choice3);
+            c3.setText("3. "+value[3]);
+            TextView c4 = (TextView) findViewById(R.id.choice4);
+            c4.setText("4. "+value[4]);
 
-        Button hostBtn = (Button) findViewById(R.id.sendMessageBtn);
+            switch (answer) {
+                case "1":
+                    c1.setTextColor(Color.RED);
+                    break;
+                case "2":
+                    c2.setTextColor(Color.RED);
+                    break;
+                case "3":
+                    c3.setTextColor(Color.RED);
+                    break;
+                case "4":
+                    c4.setTextColor(Color.RED);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+
+    private void initQuizLayout(String value) {
+        studentAnswer = "-1";
+        setContentView(R.layout.student_MCQuiz);
+        question = value;
+        String [] output = u1.splitString(question);
+        displayQuestion(output,"-1");
+        Button hostBtn = (Button) findViewById(R.id.startBtn);
 
         hostBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -314,9 +400,30 @@ public class JoinSessionActivity extends AppCompatActivity{
                     return;
                 }
 
-                sendMessage("Hello, Things!");
+                RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+                int selectedId = radioGroup.getCheckedRadioButtonId();
+                RadioButton radioButton = (RadioButton) findViewById(selectedId);
+                studentAnswer = ""+radioButton.getText().charAt(0);
+                TextView currentChoice = (TextView) findViewById(R.id.currentChoice);
+                currentChoice.setText("Current Choice : "+studentAnswer);
+                sendMessage("[R]="+studentAnswer);
             }
         });
+    }
+
+    private void initFinalResultLayout(String value){
+        setContentView(R.layout.student_finalscore);
+        TextView result = (TextView) findViewById(R.id.result);
+        String finalScore = score +"/"+value;
+        result.setText(finalScore);
+        Button hostBtn = (Button) findViewById(R.id.startBtn);
+
+        hostBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(JoinSessionActivity.this,DrawerActivity.class));
+            }
+            });
     }
 
 }

@@ -1,6 +1,7 @@
 package ca.uwaterloo.ewslee.boardcast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Harold on 20-Mar-18.
@@ -55,5 +56,32 @@ public class MCQuestion extends Question {
         }
         sb.append("\n");
         return sb.toString();
+    }
+
+    public String getStudentQuestion(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("[Q]="+this.getQuestionText());
+        for (int i = 0; i < answerList.size(); i++) {
+            sb.append("/" + this.answerList.get(i).getAnswerText());
+        }
+        return sb.toString();
+    }
+
+    public int[] calculateResults(){
+        int[] result = new int[answerList.size()];
+        Arrays.fill(result, 0);
+        for(StudentAnswer ans: studentResponse){
+           result[Integer.parseInt(ans.getResponse())-1] += 1;
+        }
+        return result;
+    }
+
+    public String getCorrectAnswer(){
+        for(MCAnswer answer: answerList){
+            if(answer.isCorrect()){
+                return (Integer.toString(answer.getAnswerID()));
+            }
+        }
+        return null;
     }
 }

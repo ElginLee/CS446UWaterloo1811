@@ -21,7 +21,7 @@ public class ResponseGraphActivity extends AppCompatActivity {
     GraphView graph;
     protected void onCreate(@Nullable Bundle bundle) {
         super.onCreate(bundle);
-        setContentView(R.layout.response_graph);
+        setContentView(R.layout.mc_graph);
         final Handler handler = new Handler();
         final Runnable r = new Runnable() {
             public void run() {

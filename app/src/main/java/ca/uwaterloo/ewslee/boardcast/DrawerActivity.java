@@ -100,7 +100,7 @@ public class DrawerActivity extends AppCompatActivity
         if (id == R.id.nav_host) {
             startActivity(new Intent(DrawerActivity.this,HostSessionActivity.class));
         } else if (id == R.id.nav_join) {
-
+            startActivity(new Intent(DrawerActivity.this, JoinSessionActivity.class));
         } else if (id == R.id.nav_edit) {
 
         } else if (id == R.id.nav_manage) {

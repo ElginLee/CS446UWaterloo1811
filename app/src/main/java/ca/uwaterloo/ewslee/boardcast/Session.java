@@ -63,6 +63,10 @@ public class Session {
         nextQuestionID--;
     }
 
+    public int getQuestionSize(){
+        return questionList.size();
+    }
+
     public String[] getQuestions() {
         String[] questionArray = new String[questionList.size()];
 
@@ -71,4 +75,15 @@ public class Session {
 
         return questionArray;
     }
+
+    public Question getQuestion(int id){
+        for(Question qn : questionList){
+            if(qn.getQuestionID()==(id)){
+                return qn;
+            }
+        }
+        return null;
+    }
+
+
 }

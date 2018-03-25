@@ -1,11 +1,14 @@
 package ca.uwaterloo.ewslee.boardcast;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,7 +38,7 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
-
+import com.jjoe64.graphview.GraphView;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,20 +64,22 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                     Manifest.permission.ACCESS_COARSE_LOCATION,
             };
 
-    private TextView mLogs;
+    private Utils u1 = new Utils();
     private String sessionName;
     private List<String>  sessionStudent = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.host_main);
+        setContentView(R.layout.host_session);
         configureHostButton();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //qn from harold
+        mockQn();
     }
 
     private void configureHostButton(){
-  /*      Button hostBtn = (Button) findViewById(R.id.hostBtn);
+        Button hostBtn = (Button) findViewById(R.id.hostBtn);
         hostBtn.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -84,10 +89,10 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                 startHosting();
                 mGoogleApiClient.connect();
                 setContentView(R.layout.waiting_screen);
-                configureStartQuizButton();
+                configureQuestionButton();
 
             }
-        });*/
+        });
     }
 
     protected  void startHosting(){
@@ -181,7 +186,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                                     @Override
                                     public void onPayloadReceived(String endpointId, Payload payload) {
                                         if (payload.getType() == Payload.Type.BYTES) {
-                                            recieveStatus(new String(payload.asBytes()), endpointId);
+                                            receiveStatus(new String(payload.asBytes()), endpointId);
                                             Nearby.Connections.sendPayload(mGoogleApiClient, endpointId, Payload.fromBytes("ACK".getBytes(Charset.forName("UTF-8"))));
                                         }
                                     }
@@ -210,7 +215,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                                 // We've been disconnected from this endpoint. No more data can be sent or received.
                                 mRemotePeerEndpoints.remove(endpointId);
                                 removeObserver(endpointId);
-                                updateWaitingScreen();
+                                initWaitingScreen();
                             }
                         },
                         new AdvertisingOptions(Strategy.P2P_STAR)
@@ -249,11 +254,11 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
         }
     }
 
-    private void updateWaitingScreen(){
+    private void initWaitingScreen(){
         ListView joinedStudent = (ListView)findViewById(R.id.StudentConnectionList);
         ArrayList<String> studentNameList = new ArrayList<String>();
         for (QuestionObserver observer: observerList) {
-            studentNameList.add(observer.getStudentID());
+            studentNameList.add(observer.getStudentID()+"::"+observer.getDeviceID());
         }
         ArrayAdapter<String> arrayAdapter =
                 new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, studentNameList);
@@ -264,31 +269,151 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
         size.setText(count);
     }
 
-    private void configureStartQuizButton(){
-        Button startBtn = (Button) findViewById(R.id.startBtn);
-        startBtn.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View view) {
-                notifyObservers("[S]");
-            }
-        });
-    }
-
-    private void recieveStatus(String value, String deviceID){
-        String[] result = splitPayload(value);
+    int [] results = new int[4];
+    private void receiveStatus(String value, String deviceID){
+         String[] result = u1.splitPayload(value);
         if(value.contains("[N]")){
 
             for (QuestionObserver observer: observerList) {
                 if(observer.getDeviceID().equals(deviceID))
                     observer.setStudentID(result[1]);
             }
-            updateWaitingScreen();
+            initWaitingScreen();
+        }
+
+        if(value.contains("[R]")){
+            QuestionObserver student= new Student();
+            for (QuestionObserver observer: observerList) {
+                if(observer.getDeviceID().equals(deviceID))
+                    student = observer;
+            }
+            Question currentQuestion = session.getQuestion(currentQn);
+            StudentAnswer answer = new StudentAnswer(student,result[1]);
+            currentQuestion.addStudentAnswer(answer);
+            results = currentQuestion.calculateResults();
         }
     }
 
-    private String[] splitPayload(String message){
-        String[] result = message.split("=");
-        return result;
+    Session session = new Session(1, "test", 1);
+    int currentQn=0;
+
+    private void mockQn(){
+        for (int i = 1; i <= 3; i++) {
+            MCQuestion mcq = new MCQuestion(session.getSessionID(), "Question " + i + " Text");
+            for (int j = 1; j <= 4; j++) {
+                mcq.addAnswer("Answer " + j, j == 3);
+            }
+            session.addQuestion(mcq);
+        }
     }
+
+    private void configureQuestionButton(){
+
+        Button startBtn = (Button) findViewById(R.id.startBtn);
+        startBtn.setText("Next");
+        startBtn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                results = new int[4];
+                Question currentQuestion = session.getQuestion(currentQn);
+                String text = currentQuestion.getStudentQuestion();
+                notifyObservers(text);
+                setContentView(R.layout.mc_graph);
+                initResponseScreen();
+                configureResultButton();
+            }
+        });
+    }
+
+    GraphView graph;
+    private void initResponseScreen(){
+
+        Question currentQuestion = session.getQuestion(currentQn);
+        String text = currentQuestion.getStudentQuestion();
+        String[] value = u1.splitPayload(text);
+        value = u1.splitString(value[1]);
+        String answer = currentQuestion.getCorrectAnswer();
+        displayQuestion(value,answer);
+        final Handler handler = new Handler();
+        final Runnable r = new Runnable() {
+            public void run() {
+                Graph g1 = new Graph();
+                graph = (GraphView) findViewById(R.id.graph);
+                graph.removeAllSeries();
+                handler.postDelayed(this, 2000);
+                g1.drawGraph(graph,results);
+            }
+        };
+        handler.postDelayed(r, 0000);
+    }
+
+    private void displayQuestion(String [] value, String answer){
+        TextView qn = (TextView)findViewById(R.id.question);
+        qn.setText(value[0]);
+        TextView c1 = (TextView) findViewById(R.id.choice1);
+        c1.setText("1. "+value[1]);
+        TextView c2 = (TextView) findViewById(R.id.choice2);
+        c2.setText("2. "+value[2]);
+        TextView c3 = (TextView) findViewById(R.id.choice3);
+        c3.setText("3. "+value[3]);
+        TextView c4 = (TextView) findViewById(R.id.choice4);
+        c4.setText("4. "+value[4]);
+
+        switch(answer){
+            case "1":
+                c1.setTextColor(Color.RED);
+                break;
+            case "2":
+                c2.setTextColor(Color.RED);
+                break;
+            case "3":
+                c3.setTextColor(Color.RED);
+                break;
+            case "4":
+                c4.setTextColor(Color.RED);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void configureResultButton(){
+        Button startBtn = (Button) findViewById(R.id.startBtn);
+        startBtn.setText("Show answer");
+        startBtn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                Question currentQuestion = session.getQuestion(currentQn);
+                String text = currentQuestion.getCorrectAnswer();
+                results = currentQuestion.calculateResults();
+                notifyObservers("[R]="+text+u1.resultsToString(results));
+                if(currentQn !=session.getQuestionSize()-1) {
+                    configureQuestionButton();
+                    currentQn++;
+                }
+                else{
+                    configureEndButton();
+                }
+            }
+        });
+    }
+
+    private void configureEndButton(){
+        Button startBtn = (Button) findViewById(R.id.startBtn);
+        startBtn.setText("Finish");
+        startBtn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                notifyObservers("[E]="+session.getQuestionSize());
+                startActivity(new Intent(HostSessionActivity.this,DrawerActivity.class));
+            }
+        });
+    }
+
+
+
+
 }
