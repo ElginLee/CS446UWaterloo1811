@@ -17,6 +17,7 @@ public class Login extends AppCompatActivity {
     private static EditText userid;
     private static EditText password;
     private static Button loginbutton;
+    private static Button skipbutton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,18 +32,31 @@ public class Login extends AppCompatActivity {
         userid = (EditText)findViewById(R.id.userid);
         password = (EditText)findViewById(R.id.password);
         loginbutton = (Button)findViewById(R.id.loginbutton);
+        skipbutton = (Button)findViewById(R.id.skip);
 
         loginbutton.setOnClickListener(
                 new View.OnClickListener(){
                     public void onClick(View v){
                         UserDAO udao = new UserDBC();
-                        if(udao.login(userid.getText().toString(), password.getText().toString())){
+                        String uidText = userid.getText().toString();
+                        if(udao.login(uidText, password.getText().toString())){
                             Intent intent = new Intent(Login.this, MainMenuActivity.class);
+                            intent.putExtra("userid", uidText);
                             startActivity(intent);
                         }
                         else{
                             Toast.makeText(Login.this, "Password is incorrect", Toast.LENGTH_SHORT).show();
                         }
+                    }
+                }
+        );
+
+        skipbutton.setOnClickListener(
+                new View.OnClickListener(){
+                    public void onClick(View v){
+                        Intent intent = new Intent(Login.this, MainMenuActivity.class);
+                        intent.putExtra("userid", "anonymous");
+                        startActivity(intent);
                     }
                 }
         );

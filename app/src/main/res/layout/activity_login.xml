@@ -39,4 +39,13 @@
         android:layout_marginTop="30dp"
         android:text="Login" />
 
+    <Button
+        android:id="@+id/skip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/loginbutton"
+        android:layout_marginBottom="25dp"
+        android:text="Skip" />
+
 </RelativeLayout>

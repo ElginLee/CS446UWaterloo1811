@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.content.Intent;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.nearby.Nearby;
 
@@ -14,15 +15,24 @@ import com.google.android.gms.nearby.Nearby;
  */
 
 public class MainMenuActivity extends AppCompatActivity {
+    private String loginUser = "";
     protected void onCreate(@Nullable Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.main_menu);
 
+        configureDisplayID();
         configureHostButton();
         configureJoinButton();
         configureDrawButton();
         configurePollButton();
         configureQuestionButton();
+        configureGradebookButton();
+    }
+
+    private void configureDisplayID(){
+        TextView userid = (TextView)findViewById(R.id.userid);
+        loginUser = getIntent().getStringExtra("userid");
+        userid.setText(loginUser);
     }
 
     private void configureHostButton(){
@@ -73,5 +83,22 @@ public class MainMenuActivity extends AppCompatActivity {
                 startActivity(new Intent(MainMenuActivity.this, QuestionActivity.class));
             }
         });
+    }
+
+    private void configureGradebookButton(){
+        Button gradebookBtn = (Button) findViewById(R.id.gradebook_button);
+        gradebookBtn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainMenuActivity.this, GradebookActivity.class);
+                intent.putExtra("userid", loginUser);
+                startActivity(intent);
+
+            }
+        });
+        if(loginUser.equals("anonymous")) {
+            gradebookBtn.setVisibility(View.GONE);
+        }
     }
 }

@@ -8,7 +8,9 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -24,12 +26,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainMenuActivity"></activity>
-        <activity android:name=".HostSessionActivity"></activity>
-        <activity android:name=".JoinSessionActivity"></activity>
-        <activity android:name=".DrawingBoard"></activity>
-        <activity android:name=".ResponseGraphActivity"></activity>
-        <activity android:name=".QuestionActivity"></activity>
+        <activity android:name=".MainMenuActivity" />
+        <activity android:name=".HostSessionActivity" />
+        <activity android:name=".JoinSessionActivity" />
+        <activity android:name=".DrawingBoard" />
+        <activity android:name=".ResponseGraphActivity" />
+        <activity android:name=".QuestionActivity" />
+        <activity android:name=".GradebookActivity"></activity>
     </application>
 
 </manifest>
