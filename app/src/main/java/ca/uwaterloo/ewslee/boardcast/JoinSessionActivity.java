@@ -387,7 +387,7 @@ public class JoinSessionActivity extends AppCompatActivity{
 
     private void initQuizLayout(String value) {
         studentAnswer = "-1";
-        setContentView(R.layout.student_MCQuiz);
+        setContentView(R.layout.student_mcquiz);
         question = value;
         String [] output = u1.splitString(question);
         displayQuestion(output,"-1");
