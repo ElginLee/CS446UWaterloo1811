@@ -20,7 +20,9 @@ public class LongQuestion extends Question {
     }
 
     public String getStudentQuestion() {
-        return this.getQuestionText() + " [" + answer + "]\n\n";
+        StringBuilder sb = new StringBuilder();
+        sb.append("[QL]="+this.getQuestionText());
+        return sb.toString();
     }
 
     public int[] calculateResults(){
