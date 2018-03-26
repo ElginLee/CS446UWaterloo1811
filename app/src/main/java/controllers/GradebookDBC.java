@@ -39,7 +39,13 @@ public class GradebookDBC implements GradebookDAO {
             String response = "";
             while ((decodedString = in.readLine()) != null) response = decodedString;
             in.close();
-            Log.w("yeps",response);
+
+            String results[] = response.split(";");
+            for(int i = 0; i < results.length - 1; i+=2){
+                String temp[] = {results[i], results[i+1]};
+                Log.d("yeppie",temp[0]+temp[1]);
+                gradeList.add(temp);
+            }
 
         } catch (MalformedURLException e) {
             e.printStackTrace();

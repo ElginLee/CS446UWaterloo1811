@@ -21,6 +21,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import controllers.GradebookDAO;
+import controllers.GradebookDBC;
+
 public class GradebookActivity extends AppCompatActivity {
 
     private ListView gradebookList;
@@ -30,6 +33,8 @@ public class GradebookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gradebook);
 
+        GradebookDAO gdbc = new GradebookDBC();
+        gdbc.getRecent("norman");
         generateList();
     }
 
