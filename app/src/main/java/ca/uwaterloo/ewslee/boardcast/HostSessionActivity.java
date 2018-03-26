@@ -70,7 +70,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.host_session);
+        setContentView(R.layout.host_main);
         configureHostButton();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

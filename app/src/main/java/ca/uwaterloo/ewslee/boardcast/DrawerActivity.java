@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 
 /**
@@ -24,6 +25,7 @@ import android.view.View;
 public class DrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private String loginUser = "";
     DrawerLayout drawer;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +52,9 @@ public class DrawerActivity extends AppCompatActivity
         NavigationView navigationViewRight = (NavigationView) findViewById(R.id.nav_view_right);
         navigationViewRight.setNavigationItemSelectedListener(this);
         navigationView.setNavigationItemSelectedListener(this);
+
+        configureDisplayID();
+
     }
 
     @Override
@@ -104,7 +109,9 @@ public class DrawerActivity extends AppCompatActivity
         } else if (id == R.id.nav_edit) {
 
         } else if (id == R.id.nav_manage) {
-
+            Intent intent = new Intent(DrawerActivity.this, GradebookActivity.class);
+            intent.putExtra("userid", loginUser);
+            startActivity(intent);
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
@@ -114,5 +121,13 @@ public class DrawerActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void configureDisplayID(){
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView userid = (TextView)headerView.findViewById(R.id.nameLabel);
+        loginUser = getIntent().getStringExtra("userid");
+        userid.setText(loginUser);
     }
 }
