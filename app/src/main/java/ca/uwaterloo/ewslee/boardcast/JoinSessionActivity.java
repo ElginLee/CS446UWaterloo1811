@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,9 +46,11 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
+import android.widget.ImageView;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.jjoe64.graphview.GraphView;
+import com.skyfishjy.library.RippleBackground;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -71,6 +74,7 @@ public class JoinSessionActivity extends AppCompatActivity{
     private String studentID = "Harold Lim";
     private Utils u1 = new Utils();
 
+    private View view1, view2;
     private static final String[] REQUIRED_PERMISSIONS =
             new String[] {
                     Manifest.permission.BLUETOOTH,
@@ -83,7 +87,9 @@ public class JoinSessionActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.join_main);
+        view1 = getLayoutInflater().inflate(R.layout.join_main, null);
+        view2 = getLayoutInflater().inflate(R.layout.join_success, null);
+        setContentView(view1);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         lv = (ListView) findViewById(R.id.sessionsAvailableListView);
@@ -94,6 +100,9 @@ public class JoinSessionActivity extends AppCompatActivity{
         lv.setAdapter(arrayAdapter);
 
         checkGooglePlayServices();
+        final RippleBackground rippleBackground=(RippleBackground)findViewById(R.id.content);
+        rippleBackground.startRippleAnimation();
+
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -101,8 +110,12 @@ public class JoinSessionActivity extends AppCompatActivity{
 
                 String item = ((TextView)view).getText().toString();
                 String[] itemSplit = item.split(" ");
-                ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar2);
-                pb.setVisibility(View.VISIBLE);
+                //ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar2);
+                //pb.setVisibility(View.VISIBLE);
+                final RippleBackground rippleBackground=(RippleBackground)findViewById(R.id.content);
+                rippleBackground.startRippleAnimation();
+                ImageView findImage = (ImageView)findViewById(R.id.centerImage);
+                findImage.setVisibility(View.VISIBLE);
                 connectToHost(itemSplit[itemSplit.length-1]);
             }
         });
@@ -211,8 +224,12 @@ public class JoinSessionActivity extends AppCompatActivity{
                             connectionsList.add(info.getEndpointName() + " " + endpointId);
                             arrayAdapter.notifyDataSetChanged();
                         }
-                        ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar2);
-                        pb.setVisibility(View.INVISIBLE);
+                        //ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar2);
+                        //pb.setVisibility(View.INVISIBLE);
+                        final RippleBackground rippleBackground=(RippleBackground)findViewById(R.id.content);
+                        ImageView findImage = (ImageView)findViewById(R.id.centerImage);
+                        findImage.setVisibility(View.INVISIBLE);
+                        rippleBackground.stopRippleAnimation();
                         //connectToHost(endpointId);
                     }
 
@@ -260,8 +277,13 @@ public class JoinSessionActivity extends AppCompatActivity{
                     @Override
                     public void onConnectionResult(String endpointId, ConnectionResolution resolution) {
                         if (resolution.getStatus().isSuccess()) {
-                            ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar2);
-                            pb.setVisibility(View.INVISIBLE);
+                            //ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar2);
+                            //pb.setVisibility(View.INVISIBLE);
+                            final RippleBackground rippleBackground=(RippleBackground)findViewById(R.id.content);
+                            rippleBackground.stopRippleAnimation();
+                            ImageView findImage = (ImageView)findViewById(R.id.centerImage);
+                            findImage.setVisibility(View.INVISIBLE);
+                            rippleBackground.setVisibility(View.INVISIBLE);
                             Nearby.Connections.stopDiscovery(mGoogleApiClient);
                             mRemoteHostEndpoint = endpointId;
                             mIsConnected = true;
@@ -269,6 +291,8 @@ public class JoinSessionActivity extends AppCompatActivity{
                             lv.setVisibility(View.INVISIBLE);
                             TextView mLogs = (TextView) findViewById(R.id.sessionlabel);
                             mLogs.setText("Connected");
+                            mLogs.setVisibility(View.VISIBLE);
+                            setContentView(view2);
                         } else {
                             if (resolution.getStatus().getStatusCode() == ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED) {
                             } else {
