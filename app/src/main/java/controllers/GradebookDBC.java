@@ -19,6 +19,35 @@ import java.util.ArrayList;
 
 public class GradebookDBC implements GradebookDAO {
     static String address = "http://192.168.0.18";
+
+    public int getID(String userid, int pos){
+        try {
+            URL url = new URL(address + "/select_gradebook_recent.php?userid=" + userid);
+            String parameters = "userid=" + userid;
+            String data = URLEncoder.encode(parameters, "UTF-8");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.connect();
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(data);
+            InputStream stream = conn.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String decodedString;
+            String response = "";
+            while ((decodedString = in.readLine()) != null) response = decodedString;
+            in.close();
+            return Integer.parseInt(response);
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public ArrayList<String[]> getRecent(String userid){
         ArrayList<String[]> gradeList = new ArrayList<String[]>();
 

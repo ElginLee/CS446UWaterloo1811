@@ -27,29 +27,25 @@ import controllers.GradebookDBC;
 public class GradebookActivity extends AppCompatActivity {
 
     private ListView gradebookList;
+    GradebookDAO gdbc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gradebook);
 
-        GradebookDAO gdbc = new GradebookDBC();
-        gdbc.getRecent("norman");
+        gdbc = new GradebookDBC();
         generateList();
     }
 
     private void generateList(){
         gradebookList = (ListView) findViewById(R.id.gradebook_listview);
+        ArrayList<String[]> list = gdbc.getRecent(getIntent().getStringExtra("userid"));
         ArrayList<String> grades = new ArrayList<String>();
         grades.add("All Grades");
-        grades.add("Quiz 1");
-        grades.add("Quiz 2");
-        grades.add("Quiz 3");
-        grades.add("Quiz 4");
-        grades.add("Quiz 5");
-        grades.add("Quiz 6");
-        grades.add("Quiz 7");
-        grades.add("Quiz 8");
+        for(int i = 0; i < list.size(); i++){
+            grades.add(list.get(i)[0] + "(" + list.get(i)[1] + ")");
+        }
         String[] gradesList = new String[grades.size()];
         for(int i = 0; i < grades.size(); i++) gradesList[i] = grades.get(i);
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, gradesList);
