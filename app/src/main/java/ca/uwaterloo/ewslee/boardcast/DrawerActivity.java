@@ -1,6 +1,7 @@
 package ca.uwaterloo.ewslee.boardcast;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +17,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import org.eazegraph.lib.charts.PieChart;
+import org.eazegraph.lib.models.PieModel;
 
 import java.util.ArrayList;
 
@@ -75,14 +79,23 @@ public class DrawerActivity extends AppCompatActivity
         TextView mLogs = (TextView) findViewById(R.id.content_textView);
         mLogs.setText("Connected");
 
-
         TableView<String[]> tableView = (TableView<String[]>) findViewById(R.id.tableView);
-        tableView.setDataAdapter(new SimpleTableDataAdapter(this, gradeTableInput));
-        tableView.setHeaderAdapter(new SimpleTableHeaderAdapter(this, TABLE_HEADERS));
-        int colorEvenRows = getResources().getColor(R.color.white);
-        int colorOddRows = getResources().getColor(R.color.gray);
-        tableView.setDataRowBackgroundProvider(TableDataRowBackgroundProviders.alternatingRowColors(colorEvenRows, colorOddRows));
+        PieChart mPieChart = (PieChart) findViewById(R.id.piechart);
 
+        if(!getIntent().getStringExtra("userid").equals("anonymous")) {
+            tableView.setDataAdapter(new SimpleTableDataAdapter(this, gradeTableInput));
+            tableView.setHeaderAdapter(new SimpleTableHeaderAdapter(this, TABLE_HEADERS));
+            int colorEvenRows = getResources().getColor(R.color.white);
+            int colorOddRows = getResources().getColor(R.color.gray);
+            tableView.setDataRowBackgroundProvider(TableDataRowBackgroundProviders.alternatingRowColors(colorEvenRows, colorOddRows));
+
+            mPieChart.addPieSlice(new PieModel("Correct", 1, Color.parseColor("#80ff80")));
+            mPieChart.addPieSlice(new PieModel("Wrong", 2, Color.parseColor("#FE6DA8")));
+        }else{
+            tableView.setVisibility(View.INVISIBLE);
+            mPieChart.setVisibility(View.INVISIBLE);
+
+        }
     }
 
     @Override
