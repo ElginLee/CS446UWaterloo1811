@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/user_id"
-            android:inputType="textCapWords"/>
+            android:inputType="textPersonName"/>
     </android.support.design.widget.TextInputLayout>
 
 
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/password"
-            android:inputType="textCapWords"/>
+            android:inputType="textPassword"/>
     </android.support.design.widget.TextInputLayout>
 
 
