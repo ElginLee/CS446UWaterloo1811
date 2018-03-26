@@ -28,6 +28,12 @@ public class LongQuestion extends Question {
     public int[] calculateResults(){
         int[] result = new int[2];
         Arrays.fill(result, 0);
+        for(StudentAnswer ans: studentResponse){
+            if(ans.getResponse().equals(answer))
+            result[0]+=1;
+            else
+                result[1]+=1;
+        }
         return result;
     }
 

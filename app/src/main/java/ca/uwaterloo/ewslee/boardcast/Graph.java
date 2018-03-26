@@ -12,7 +12,7 @@ import java.util.Random;
  */
 
 public class Graph {
-    public void drawGraph(GraphView graph, int [] results){
+    public void drawMCGraph(GraphView graph, int [] results){
         BarGraphSeries<DataPoint> series = new BarGraphSeries<>(new DataPoint[] {
                 new DataPoint(0,0),
                 new DataPoint(1,results[0]),
@@ -32,6 +32,27 @@ public class Graph {
         graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
 // draw values on top
+
+    }
+
+    public void drawLongGraph(GraphView graph, int [] results){
+
+        BarGraphSeries<DataPoint> series = new BarGraphSeries<>(new DataPoint[] {
+                new DataPoint(0,0),
+                new DataPoint(1,results[0]),
+                new DataPoint(2, results[1]),
+        });
+        series.setSpacing(20);
+        graph.addSeries(series);
+
+// draw values on top
+        graph.getViewport().setMinX(0);
+        graph.getViewport().setMaxX(3);
+
+        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
+        staticLabelsFormatter.setHorizontalLabels(new String[] {"","Correct","Wrong", ""});
+        graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+
         series.setDrawValuesOnTop(true);
     }
 }

@@ -60,7 +60,7 @@ public class MCQuestion extends Question {
 
     public String getStudentQuestion(){
         StringBuilder sb = new StringBuilder();
-        sb.append("[Q]="+this.getQuestionText());
+        sb.append("[QM]="+this.getQuestionText());
         for (int i = 0; i < answerList.size(); i++) {
             sb.append("/" + this.answerList.get(i).getAnswerText());
         }

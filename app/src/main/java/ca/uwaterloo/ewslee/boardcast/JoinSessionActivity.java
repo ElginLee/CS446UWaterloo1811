@@ -19,9 +19,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -321,13 +323,23 @@ public class JoinSessionActivity extends AppCompatActivity{
 
 
     private void recieveStatus(String value,String deviceID){
+
         String[] result = u1.splitPayload(value);
-        if(result[0].contains("[Q]")){
-            initQuizLayout(result[1]);
+        if(result[0].contains("[QM]")){
+            questionType=result[0];
+            initMCQuizLayout(result[1]);
+        }
+        else if (result[0].contains("[QL]")){
+            questionType=result[0];
+            initLongQuizLayout(result[1]);
         }
         else if(result[0].contains("[R]")){
-            initResultLayout(result[1]);
+            if(questionType.contains("[QM]"))
+                initMCResultLayout(result[1]);
+            else if (questionType.contains("[QL]"))
+                initLongResultLayout(result[1]);
         }
+
         else if(result[0].contains("[E]")){
             initFinalResultLayout(result[1]);
         }
@@ -338,9 +350,10 @@ public class JoinSessionActivity extends AppCompatActivity{
     }
 
     String question = "";
+    String questionType = "";
     String studentAnswer = "";
     int score = 0;
-    private void initResultLayout(String value) {
+    private void initMCResultLayout(String value) {
         Graph g1 = new Graph();
         final int[] results = u1.splitResults(value);
         String [] output = u1.splitString(question);
@@ -357,7 +370,35 @@ public class JoinSessionActivity extends AppCompatActivity{
                 Graph g1 = new Graph();
                 GraphView graph = (GraphView) findViewById(R.id.graph);
                 graph.removeAllSeries();
-                g1.drawGraph(graph,results);
+                g1.drawMCGraph(graph,results);
+            }
+        };
+        handler.postDelayed(r, 0000);
+        Button btn = (Button) findViewById(R.id.startBtn);
+        btn.setVisibility(View.INVISIBLE);
+
+    }
+
+    private void initLongResultLayout(String value) {
+        Graph g1 = new Graph();
+        final int[] results = u1.splitResults(value);
+        String [] output = u1.splitString(question);
+        String answer = u1.getAnswer(value);
+        if(studentAnswer.equals(answer)){
+            score++;
+        }
+        setContentView(R.layout.long_graph);
+        displayLongQuestion(output, answer);
+        TextView c1 = (TextView) findViewById(R.id.choice1);
+        c1.setText("Answer: "+answer);
+        final Handler handler = new Handler();
+        final Runnable r = new Runnable() {
+            public void run() {
+
+                Graph g1 = new Graph();
+                GraphView graph = (GraphView) findViewById(R.id.longgraph);
+                graph.removeAllSeries();
+                g1.drawLongGraph(graph,results);
             }
         };
         handler.postDelayed(r, 0000);
@@ -411,7 +452,7 @@ public class JoinSessionActivity extends AppCompatActivity{
     }
 
 
-    private void initQuizLayout(String value) {
+    private void initMCQuizLayout(String value) {
         studentAnswer = "-1";
         setContentView(R.layout.student_mcquiz);
         question = value;
@@ -435,6 +476,46 @@ public class JoinSessionActivity extends AppCompatActivity{
                 sendMessage("[R]="+studentAnswer);
             }
         });
+    }
+
+    private void initLongQuizLayout(String value) {
+        studentAnswer = "-1";
+        setContentView(R.layout.student_longquiz);
+        question = value;
+        String [] output = u1.splitString(question);
+        displayLongQuestion(output,"-1");
+        Button hostBtn = (Button) findViewById(R.id.startBtn);
+
+        hostBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mGoogleApiClient.isConnected()) {
+                    return;
+                }
+
+                EditText et = (EditText) findViewById(R.id.editText);
+                studentAnswer = ""+et.getText().toString();
+                TextView currentChoice = (TextView) findViewById(R.id.currentChoice);
+                currentChoice.setText("Current Answer : "+studentAnswer);
+                sendMessage("[R]="+studentAnswer);
+            }
+        });
+    }
+
+    private void displayLongQuestion(String [] value, String answer){
+        if(answer.equals("-1")){
+            TextView qn = (TextView) findViewById(R.id.question);
+            qn.setText(value[0]);
+            EditText et = (EditText) findViewById(R.id.editText);
+            et.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT);
+        }
+        else {
+            TextView qn = (TextView) findViewById(R.id.question);
+            qn.setText(value[0]);
+
+        }
     }
 
     private void initFinalResultLayout(String value){

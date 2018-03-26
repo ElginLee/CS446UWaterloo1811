@@ -279,6 +279,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                     observer.setStudentID(result[1]);
             }
             initWaitingScreen();
+            configureQuestionButton();
         }
 
         if(value.contains("[R]")){
@@ -298,13 +299,14 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
     int currentQn=0;
 
     private void mockQn(){
-        for (int i = 1; i <= 3; i++) {
+         for (int i = 1; i <= 2; i++) {
             MCQuestion mcq = new MCQuestion(session.getSessionID(), "Question " + i + " Text");
             for (int j = 1; j <= 4; j++) {
                 mcq.addAnswer("Answer " + j, j == 3);
             }
             session.addQuestion(mcq);
         }
+        session.addQuestion(new LongQuestion(session.getSessionID(), "Long Question Text", "123"));
     }
 
     private void configureQuestionButton(){
@@ -319,32 +321,63 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                 Question currentQuestion = session.getQuestion(currentQn);
                 String text = currentQuestion.getStudentQuestion();
                 notifyObservers(text);
-                initResponseScreen(text);
+                if(text.contains("[QL]")){
+                    initLongResponseScreen(text);
+                }
+                else if(text.contains("[QM]")){
+                    initMCResponseScreen(text);
+                }
+
 
             }
         });
     }
 
-    GraphView graph;
-    private void initResponseScreen(String text){
-        setContentView(R.layout.mc_graph);
+    private void initMCResponseScreen(String text){
+
         Question currentQuestion = session.getQuestion(currentQn);
         String[] value = u1.splitPayload(text);
         value = u1.splitString(value[1]);
         String answer = currentQuestion.getCorrectAnswer();
-        displayQuestion(value,answer);
-        final Handler handler = new Handler();
-        final Runnable r = new Runnable() {
-            public void run() {
-                Graph g1 = new Graph();
-                graph = (GraphView) findViewById(R.id.graph);
-                graph.removeAllSeries();
-                handler.postDelayed(this, 2000);
-                g1.drawGraph(graph,results);
-            }
-        };
-        handler.postDelayed(r, 0000);
-        configureResultButton();
+
+            setContentView(R.layout.mc_graph);
+            displayQuestion(value,answer);
+            final Handler handler = new Handler();
+            final Runnable r = new Runnable() {
+                public void run() {
+                    Graph g1 = new Graph();
+                    GraphView graph = (GraphView) findViewById(R.id.graph);
+                    graph.removeAllSeries();
+                    handler.postDelayed(this, 1000);
+
+                    g1.drawMCGraph(graph,results);
+                }
+            };
+            handler.postDelayed(r, 0000);
+        configureResultButton(handler,r);
+    }
+
+    private void initLongResponseScreen(String text){
+        Question currentQuestion = session.getQuestion(currentQn);
+        String[] value = u1.splitPayload(text);
+        value = u1.splitString(value[1]);
+        String answer = currentQuestion.getCorrectAnswer();
+            setContentView(R.layout.long_graph);
+            displayLongQuestion(value,answer);
+            final Handler handler = new Handler();
+            final Runnable r = new Runnable() {
+                public void run() {
+                    Graph g1 = new Graph();
+                    GraphView graph = (GraphView) findViewById(R.id.longgraph);
+                    graph.removeAllSeries();
+                    handler.postDelayed(this, 1000);
+
+                    g1.drawLongGraph(graph,results);
+                }
+            };
+            handler.postDelayed(r, 0000);
+
+        configureResultButton(handler,r);
     }
 
     private void displayQuestion(String [] value, String answer){
@@ -377,7 +410,14 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
         }
     }
 
-    private void configureResultButton(){
+    private void displayLongQuestion(String [] value, String answer){
+        TextView qn = (TextView)findViewById(R.id.question);
+        qn.setText(value[0]);
+        TextView c1 = (TextView) findViewById(R.id.choice1);
+        c1.setText("Answer: "+answer);
+    }
+
+    private void configureResultButton(final Handler handler, final Runnable r){
         Button startBtn = (Button) findViewById(R.id.startBtn);
         startBtn.setText("Show answer");
         startBtn.setOnClickListener(new View.OnClickListener(){
@@ -388,6 +428,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                 String text = currentQuestion.getCorrectAnswer();
                 results = currentQuestion.calculateResults();
                 notifyObservers("[R]="+text+u1.resultsToString(results));
+                handler.removeCallbacks(r);
                 if(currentQn !=session.getQuestionSize()-1) {
                     configureQuestionButton();
                     currentQn++;

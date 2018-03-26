@@ -7,7 +7,7 @@
 
 
     <com.jjoe64.graphview.GraphView
-        android:id="@+id/graph"
+        android:id="@+id/longgraph"
         android:layout_width="0dp"
         android:layout_height="158dp"
         android:layout_marginBottom="24dp"
@@ -25,9 +25,10 @@
         android:layout_width="353dp"
         android:layout_height="45dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="32dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="@color/colorPrimary"
         android:text="Next"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -43,9 +44,9 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/question"
-        android:textSize="18.0sp"/>
+        app:layout_constraintTop_toBottomOf="@+id/question" />
 
     <TextView
         android:id="@+id/question"
