@@ -5,5 +5,5 @@ package controllers;
  */
 
 public interface StudentAnswerDAO {
-    public void insertRecord(String studentid, String sessionid, String questionid, String answerid);
+    public void insertRecord(String studentid, int sessionid, int questionid, String answerid);
 }
