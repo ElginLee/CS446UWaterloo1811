@@ -2,6 +2,8 @@ package ca.uwaterloo.ewslee.boardcast;
 
 import java.util.Arrays;
 
+import controllers.QuestionDBC;
+
 /**
  * Created by Harold on 20-Mar-18.
  */
@@ -40,4 +42,14 @@ public class LongQuestion extends Question {
     public String getCorrectAnswer(){
         return answer;
     }
-}
+
+    public void insertQuestionAnswer(int sessionID){
+        QuestionDBC qDBC = new QuestionDBC();
+        String[] choice = new String[4];
+
+        qDBC.insertQuestion(getQuestionID(),sessionID,getQuestionText(),answer);
+        for(StudentAnswer response: studentResponse){
+            response.insertResponseDatabase(sessionID,getQuestionID());
+        }
+    }
+    }

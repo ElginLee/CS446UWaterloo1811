@@ -36,7 +36,6 @@ public class StudentAnswerDBC implements StudentAnswerDAO {
             String response = "";
             while ((decodedString = in.readLine()) != null) response = decodedString;
             in.close();
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
