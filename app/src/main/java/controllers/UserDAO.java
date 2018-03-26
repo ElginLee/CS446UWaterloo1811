@@ -6,5 +6,5 @@ package controllers;
 
 public interface UserDAO {
     public boolean login(String userid, String password);
-    public void insertUser(String userid, String password, String email);
+    public boolean insertUser(String userid, String password, String email);
 }

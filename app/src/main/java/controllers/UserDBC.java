@@ -54,7 +54,7 @@ public class UserDBC implements UserDAO{
         return false;
     }
 
-    public void insertUser(String userid, String password, String email){
+    public boolean insertUser(String userid, String password, String email){
         try {
             URL url = new URL(address + "/insert_user.php?userid=" + userid +
                     "&password=" + password +
@@ -74,11 +74,14 @@ public class UserDBC implements UserDAO{
             String response = "";
             while ((decodedString = in.readLine()) != null) response = decodedString;
             in.close();
+            if(response.equals("fail")) return false;
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return true;
     }
 }
