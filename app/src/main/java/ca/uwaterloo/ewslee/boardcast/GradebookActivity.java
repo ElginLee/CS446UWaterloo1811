@@ -30,19 +30,21 @@ public class GradebookActivity extends AppCompatActivity {
 
     private ListView gradebookList;
     GradebookDAO gdbc;
+    String loginUser = "anonymous";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gradebook);
 
+        loginUser = getIntent().getStringExtra("userid");
         gdbc = new GradebookDBC();
         generateList();
     }
 
     private void generateList(){
         gradebookList = (ListView) findViewById(R.id.gradebook_listview);
-        ArrayList<String[]> list = gdbc.getRecent(getIntent().getStringExtra("userid"));
+        ArrayList<String[]> list = gdbc.getRecent(loginUser);
         ArrayList<String> grades = new ArrayList<String>();
         grades.add("All Grades");
         for(int i = 0; i < list.size(); i++){
@@ -57,34 +59,53 @@ public class GradebookActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(GradebookActivity.this, "Selected: " + i, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(GradebookActivity.this, "Selected: " + i, Toast.LENGTH_SHORT).show();
+                if(i == 0){
+                    ArrayList<String[]> gl = gdbc.getRecent(loginUser);
+                    try{
+                        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), loginUser + "_allgrades.pdf");
+                        file.createNewFile();
+                        FileOutputStream fOut = new FileOutputStream(file);
 
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "test.pdf");
-                try{
-                    file.createNewFile();
-                    FileOutputStream fOut = new FileOutputStream(file);
+                        PdfDocument document = new PdfDocument();
+                        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(100,100,1).create();
+                        PdfDocument.Page page = document.startPage(pageInfo);
+                        Canvas canvas = page.getCanvas();
+                        Paint paint = new Paint();
+                        paint.setTextSize(2);
+                        paint.setLetterSpacing(0.5f);
 
-                    PdfDocument document = new PdfDocument();
-                    PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(100,100,1).create();
-                    PdfDocument.Page page = document.startPage(pageInfo);
-                    Canvas canvas = page.getCanvas();
-                    Paint paint = new Paint();
+                        int x = 10, y = 10;
+                        String res = "Gradebook for " + loginUser + "\n";
+                        //canvas.drawText(res, x, y, paint);
+                        for(int j = 0; j < gl.size(); j++){
+                            y += 10;
+                            res = gl.get(j)[0];
+                            res += ": ";
+                            res += gl.get(j)[1];
+                            res += "\n";
+                            canvas.drawText(res, x, y, paint);
+                        }
 
-                    canvas.drawText("lolwhut", 10, 10, paint);
-                    document.finishPage(page);
-                    document.writeTo(fOut);
-                    document.close();
+                        canvas.drawText(res, 10, 10, paint);
+                        document.finishPage(page);
+                        document.writeTo(fOut);
+                        document.close();
 
-                    Intent target = new Intent(Intent.ACTION_VIEW);
-                    target.setDataAndType(Uri.fromFile(file),"application/pdf");
-                    target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        Intent target = new Intent(Intent.ACTION_VIEW);
+                        target.setDataAndType(Uri.fromFile(file),"application/pdf");
+                        target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
-                    Intent intent = Intent.createChooser(target, "Open File");
-                    startActivity(intent);
-                }catch(IOException e) {
-                    Log.i("error", e.getLocalizedMessage() + getFilesDir().getAbsolutePath());
-                }catch(ActivityNotFoundException e){
-                    Log.i("error", e.getLocalizedMessage());
+                        Intent intent = Intent.createChooser(target, "Open File");
+                        startActivity(intent);
+                    }catch(IOException e) {
+                        Log.i("error", e.getLocalizedMessage() + getFilesDir().getAbsolutePath());
+                    }catch(ActivityNotFoundException e){
+                        Log.i("error", e.getLocalizedMessage());
+                    }
+                }
+                else{
+
                 }
             }
         });

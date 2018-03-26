@@ -13,4 +13,9 @@ public interface QuestionDAO {
                                String answerText3,
                                String answerText4,
                                int isCorrect);
+
+    public void insertQuestion(int questionID,
+                               int sessionID,
+                               String questionText,
+                               String answerText);
 }
