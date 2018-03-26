@@ -461,6 +461,9 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
             @Override
             public void onClick(View view) {
                 notifyObservers("[E]="+session.getQuestionSize());
+                if(saveResponse){
+                    insertIntoDatabase();
+                }
                 Intent intent = new Intent(HostSessionActivity.this,DrawerActivity.class);
                 intent.putExtra("userid", id);
                 startActivity(intent);
@@ -471,7 +474,11 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
     public void insertIntoDatabase(){
         SessionDBC sDBC = new SessionDBC();
         int sessionID = sDBC.insertSession(session.getName(),session.getCreatorID());
-
+        Question currentQuestion;
+       for(int i =0; i< session.getQuestionSize(); i++){
+         currentQuestion = session.getQuestion(i);
+          currentQuestion.insertQuestionAnswer(sessionID);
+        }
     }
 
 

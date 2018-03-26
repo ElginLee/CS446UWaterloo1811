@@ -1,5 +1,7 @@
 package ca.uwaterloo.ewslee.boardcast;
 
+import controllers.StudentAnswerDBC;
+
 /**
  * Created by kianl on 3/25/2018.
  */
@@ -27,5 +29,10 @@ public class StudentAnswer {
 
     public String getResponse(){
         return answer;
+    }
+
+    public void insertResponseDatabase(int sessionID, int questionID){
+        StudentAnswerDBC sDBC = new StudentAnswerDBC();
+        sDBC.insertRecord(student.getStudentID(),sessionID,questionID,answer);
     }
 }

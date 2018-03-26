@@ -68,4 +68,6 @@ public abstract class Question {
     public abstract int[] calculateResults();
 
     public abstract String getCorrectAnswer();
+
+    public abstract void insertQuestionAnswer(int sessionID);
 }
