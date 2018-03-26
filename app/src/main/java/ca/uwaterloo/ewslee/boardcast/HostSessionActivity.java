@@ -16,10 +16,10 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -43,6 +43,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import controllers.QuestionDBC;
+import controllers.SessionDBC;
+
 /**
  * Created by Elgin on 3/2/2018.
  */
@@ -53,7 +56,6 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
 
     private GoogleApiClient mGoogleApiClient;
     private List<String> mRemotePeerEndpoints = new ArrayList<>();
-    private List<Student> studentNameList = new ArrayList<>();
     private List<QuestionObserver> observerList = new ArrayList<>();
     private static final String[] REQUIRED_PERMISSIONS =
             new String[] {
@@ -64,14 +66,17 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                     Manifest.permission.ACCESS_COARSE_LOCATION,
             };
 
+    Session session = new Session(1, "test", "123");
     private Utils u1 = new Utils();
     private String sessionName;
-    private List<String>  sessionStudent = new ArrayList<>();
+    private String id = "";
+    boolean saveResponse =false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.host_main);
         configureHostButton();
+        id = getIntent().getStringExtra("userid");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //qn from harold
@@ -86,6 +91,10 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
             public void onClick(View view) {
                 EditText sessionInput   = (EditText)findViewById(R.id.sessionNameInput);
                 sessionName = sessionInput.getText().toString();
+                session.setName(sessionName);
+                session.setCreatorID(id);
+                CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox);
+                saveResponse = checkBox.isChecked();
                 startHosting();
                 mGoogleApiClient.connect();
                 setContentView(R.layout.waiting_screen);
@@ -298,7 +307,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
         }
     }
 
-    Session session = new Session(1, "test", 1);
+
     int currentQn=0;
 
     private void mockQn(){
@@ -452,9 +461,17 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
             @Override
             public void onClick(View view) {
                 notifyObservers("[E]="+session.getQuestionSize());
-                startActivity(new Intent(HostSessionActivity.this,DrawerActivity.class));
+                Intent intent = new Intent(HostSessionActivity.this,DrawerActivity.class);
+                intent.putExtra("userid", id);
+                startActivity(intent);
             }
         });
+    }
+
+    public void insertIntoDatabase(){
+        SessionDBC sDBC = new SessionDBC();
+        int sessionID = sDBC.insertSession(session.getName(),session.getCreatorID());
+
     }
 
 

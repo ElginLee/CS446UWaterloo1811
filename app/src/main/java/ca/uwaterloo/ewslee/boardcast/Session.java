@@ -9,11 +9,11 @@ import java.util.ArrayList;
 public class Session {
     private int sessionID;
     private String name;
-    private int creatorID;
+    private String creatorID;
     private ArrayList<Question> questionList;
     private int nextQuestionID;
 
-    public Session(int sessionID, String name, int creatorID) {
+    public Session(int sessionID, String name, String creatorID) {
         this.sessionID = sessionID;
         this.name = name;
         this.creatorID = creatorID;
@@ -36,11 +36,11 @@ public class Session {
         this.name = name;
     }
 
-    public int getCreatorID() {
+    public String getCreatorID() {
         return creatorID;
     }
 
-    public void setCreatorID(int creatorID) {
+    public void setCreatorID(String creatorID) {
         this.creatorID = creatorID;
     }
 

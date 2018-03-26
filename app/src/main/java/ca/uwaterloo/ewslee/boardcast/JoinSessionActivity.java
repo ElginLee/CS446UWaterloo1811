@@ -76,7 +76,7 @@ public class JoinSessionActivity extends AppCompatActivity{
     private ListView lv;
     private List<String> connectionsList;
     private ArrayAdapter<String> arrayAdapter;
-    private String studentID = "Harold Lim";
+    private String studentID = "";
     private Utils u1 = new Utils();
 
     private View view1, view2;
@@ -535,7 +535,9 @@ public class JoinSessionActivity extends AppCompatActivity{
         hostBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(JoinSessionActivity.this,DrawerActivity.class));
+                Intent intent = new Intent(JoinSessionActivity.this,DrawerActivity.class);
+                intent.putExtra("userid", studentID);
+                startActivity(intent);
             }
             });
     }

@@ -11,6 +11,7 @@ public class MCQuestion extends Question {
     private ArrayList<MCAnswer> answerList;
     private int nextAnswerID;
 
+
     public MCQuestion (int sessionID, String questionText) {
         super(sessionID, questionText);
         answerList = new ArrayList<>();
