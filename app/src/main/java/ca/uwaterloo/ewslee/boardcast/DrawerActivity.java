@@ -17,13 +17,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 
+import controllers.GradebookDAO;
+import controllers.GradebookDBC;
+import de.codecrafters.tableview.*;
+import de.codecrafters.tableview.toolkit.*;
 /**
  * Created by Elgin on 24/3/2018.
  */
 
 public class DrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String[][] DATA_TO_SHOW = { { "This", "is", "a", "test" },
+            { "and", "a", "second", "test" } };
+    private static final String[] TABLE_HEADERS = { "Quiz", "Score" };
 
     private String loginUser = "";
     DrawerLayout drawer;
@@ -54,6 +62,26 @@ public class DrawerActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         configureDisplayID();
+
+        GradebookDAO gdbc = new GradebookDBC();
+        ArrayList<String[]> grades = gdbc.getRecent("norman");
+        String[][] gradeTableInput = new String[grades.size()][2];
+        int i = 0;
+        for (String[] str : grades) {
+            gradeTableInput[i][0] = str[0];
+            gradeTableInput[i][1] = str[1];
+            i++;
+        }
+        TextView mLogs = (TextView) findViewById(R.id.content_textView);
+        mLogs.setText("Connected");
+
+
+        TableView<String[]> tableView = (TableView<String[]>) findViewById(R.id.tableView);
+        tableView.setDataAdapter(new SimpleTableDataAdapter(this, gradeTableInput));
+        tableView.setHeaderAdapter(new SimpleTableHeaderAdapter(this, TABLE_HEADERS));
+        int colorEvenRows = getResources().getColor(R.color.white);
+        int colorOddRows = getResources().getColor(R.color.gray);
+        tableView.setDataRowBackgroundProvider(TableDataRowBackgroundProviders.alternatingRowColors(colorEvenRows, colorOddRows));
 
     }
 

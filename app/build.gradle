@@ -41,9 +41,11 @@ dependencies {
     compile 'com.skyfishjy.ripplebackground:library:1.0.1'
     compile 'com.github.blackfizz:eazegraph:1.2.2@aar'
     compile 'com.nineoldandroids:library:2.4.0'
+    compile 'de.codecrafters.tableview:tableview:2.8.0'
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testCompile 'junit:junit:4.12'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 }
