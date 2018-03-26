@@ -36,8 +36,6 @@ public class GradebookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gradebook);
 
-        QuestionDAO qdbc = new QuestionDBC();
-        qdbc.insertQuestion(2, 14, "sample question 2", "q2 a1", "q2 a2", "q2 a3", "q2 a4", 2);
         gdbc = new GradebookDBC();
         generateList();
     }
