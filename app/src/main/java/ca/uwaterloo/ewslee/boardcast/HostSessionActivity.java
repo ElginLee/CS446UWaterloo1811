@@ -270,15 +270,17 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
     }
 
     int [] results = new int[4];
+    boolean state = true;
     private void receiveStatus(String value, String deviceID){
          String[] result = u1.splitPayload(value);
-        if(value.contains("[N]")){
+        if(value.contains("[N]") && state ){
 
             for (QuestionObserver observer: observerList) {
                 if(observer.getDeviceID().equals(deviceID))
                     observer.setStudentID(result[1]);
             }
             initWaitingScreen();
+
             configureQuestionButton();
         }
 
@@ -318,6 +320,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
             @Override
             public void onClick(View view) {
                 results = new int[4];
+                state = false;
                 Question currentQuestion = session.getQuestion(currentQn);
                 String text = currentQuestion.getStudentQuestion();
                 notifyObservers(text);

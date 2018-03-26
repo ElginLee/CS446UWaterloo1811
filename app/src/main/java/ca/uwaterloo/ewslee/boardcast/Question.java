@@ -1,6 +1,7 @@
 package ca.uwaterloo.ewslee.boardcast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -52,9 +53,11 @@ public abstract class Question {
     }
 
     public void removeStudentAnswer(StudentAnswer value){
-        for (StudentAnswer answer: studentResponse) {
-            if(answer.getStudent()==value.getStudent())
-                studentResponse.remove(answer);
+        for (Iterator<StudentAnswer> iterator = studentResponse.iterator(); iterator.hasNext();) {
+            StudentAnswer answer = iterator.next();
+            if(answer.getStudent()==value.getStudent()) {
+                iterator.remove();
+            }
         }
     }
 
