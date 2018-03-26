@@ -54,6 +54,9 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.jjoe64.graphview.GraphView;
 import com.skyfishjy.library.RippleBackground;
 
+import org.eazegraph.lib.charts.PieChart;
+import org.eazegraph.lib.models.PieModel;
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +103,7 @@ public class JoinSessionActivity extends AppCompatActivity{
                 (this, android.R.layout.simple_list_item_1, connectionsList);
 
         lv.setAdapter(arrayAdapter);
-
+        studentID = getIntent().getStringExtra("userid");
         checkGooglePlayServices();
         final RippleBackground rippleBackground=(RippleBackground)findViewById(R.id.content);
         rippleBackground.startRippleAnimation();
@@ -470,10 +473,13 @@ public class JoinSessionActivity extends AppCompatActivity{
                 RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
                 int selectedId = radioGroup.getCheckedRadioButtonId();
                 RadioButton radioButton = (RadioButton) findViewById(selectedId);
-                studentAnswer = ""+radioButton.getText().charAt(0);
-                TextView currentChoice = (TextView) findViewById(R.id.currentChoice);
-                currentChoice.setText("Current Choice : "+studentAnswer);
-                sendMessage("[R]="+studentAnswer);
+                if(selectedId != -1){
+                    studentAnswer = ""+radioButton.getText().charAt(0);
+                    TextView currentChoice = (TextView) findViewById(R.id.currentChoice);
+                    currentChoice.setText("Current Choice : "+studentAnswer);
+                    sendMessage("[R]="+studentAnswer);
+                }
+
             }
         });
     }
@@ -520,9 +526,10 @@ public class JoinSessionActivity extends AppCompatActivity{
 
     private void initFinalResultLayout(String value){
         setContentView(R.layout.student_finalscore);
-        TextView result = (TextView) findViewById(R.id.result);
-        String finalScore = score +"/"+value;
-        result.setText(finalScore);
+        int wrong = Integer.parseInt(value)-score;
+        PieChart mPieChart = (PieChart) findViewById(R.id.piechart);
+        mPieChart.addPieSlice(new PieModel("Correct", score, Color.parseColor("#80ff80")));
+        mPieChart.addPieSlice(new PieModel("Wrong", wrong, Color.parseColor("#FE6DA8")));
         Button hostBtn = (Button) findViewById(R.id.startBtn);
 
         hostBtn.setOnClickListener(new View.OnClickListener() {

@@ -215,6 +215,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                                 // We've been disconnected from this endpoint. No more data can be sent or received.
                                 mRemotePeerEndpoints.remove(endpointId);
                                 removeObserver(endpointId);
+                                if(state)
                                 initWaitingScreen();
                             }
                         },
