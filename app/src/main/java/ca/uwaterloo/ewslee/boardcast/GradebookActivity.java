@@ -68,7 +68,7 @@ public class GradebookActivity extends AppCompatActivity {
                         FileOutputStream fOut = new FileOutputStream(file);
 
                         PdfDocument document = new PdfDocument();
-                        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(100,100,1).create();
+                        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(100,150,1).create();
                         PdfDocument.Page page = document.startPage(pageInfo);
                         Canvas canvas = page.getCanvas();
                         Paint paint = new Paint();
@@ -105,7 +105,6 @@ public class GradebookActivity extends AppCompatActivity {
                     }
                 }
                 else{
-
                 }
             }
         });

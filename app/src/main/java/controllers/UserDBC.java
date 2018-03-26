@@ -53,4 +53,32 @@ public class UserDBC implements UserDAO{
 
         return false;
     }
+
+    public void insertUser(String userid, String password, String email){
+        try {
+            URL url = new URL(address + "/insert_user.php?userid=" + userid +
+                    "&password=" + password +
+                    "&email=" + email);
+            String parameters = "userid=" + userid + "&password=" + password + "&email=" + email;
+            String data = URLEncoder.encode(parameters, "UTF-8");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.connect();
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(data);
+            InputStream stream = conn.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String decodedString;
+            String response = "";
+            while ((decodedString = in.readLine()) != null) response = decodedString;
+            in.close();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
