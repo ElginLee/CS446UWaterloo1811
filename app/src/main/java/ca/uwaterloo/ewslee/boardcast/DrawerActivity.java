@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,6 +17,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.eazegraph.lib.charts.PieChart;
@@ -25,6 +29,8 @@ import java.util.ArrayList;
 
 import controllers.GradebookDAO;
 import controllers.GradebookDBC;
+import controllers.UserDAO;
+import controllers.UserDBC;
 import de.codecrafters.tableview.*;
 import de.codecrafters.tableview.toolkit.*;
 /**
@@ -37,12 +43,27 @@ public class DrawerActivity extends AppCompatActivity
             { "and", "a", "second", "test" } };
     private static final String[] TABLE_HEADERS = { "Quiz", "Score" };
 
+    TableView<String[]> tableView;
+    PieChart mPieChart;
+    TextView content_textView;
+    LinearLayout registration;
+    TextInputLayout email;
+    TextInputLayout userid;
+    TextInputLayout password;
     private String loginUser = "";
     DrawerLayout drawer;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_main);
+
+        tableView = (TableView<String[]>) findViewById(R.id.tableView);
+        mPieChart = (PieChart) findViewById(R.id.contentPieChart);
+        content_textView = (TextView) findViewById(R.id.content_textView);
+        registration = (LinearLayout) findViewById(R.id.registration_layout);
+        email  = (TextInputLayout) findViewById(R.id.email_layout);
+        userid  = (TextInputLayout) findViewById(R.id.userid_layout);
+        password  = (TextInputLayout) findViewById(R.id.password_layout);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -85,10 +106,6 @@ public class DrawerActivity extends AppCompatActivity
             i++;
         }
 
-        TableView<String[]> tableView = (TableView<String[]>) findViewById(R.id.tableView);
-        PieChart mPieChart = (PieChart) findViewById(R.id.contentPieChart);
-
-
 
         if(!getIntent().getStringExtra("userid").equals("anonymous")) {
             tableView.setDataAdapter(new SimpleTableDataAdapter(this, gradeTableInput));
@@ -99,11 +116,30 @@ public class DrawerActivity extends AppCompatActivity
 
             mPieChart.addPieSlice(new PieModel("Pass", pass, Color.parseColor("#80ff80")));
             mPieChart.addPieSlice(new PieModel("Fail", fail, Color.parseColor("#FF5733")));
+            content_textView.setVisibility(View.INVISIBLE);
+            registration.setVisibility(View.INVISIBLE);
         }else{
+            content_textView.setText("Register to save results to cloud!");
             tableView.setVisibility(View.INVISIBLE);
             mPieChart.setVisibility(View.INVISIBLE);
 
+            Button register = (Button) findViewById(R.id.register_button);
+
+            register.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UserDAO userRegister = new UserDBC();
+                    userRegister.insertUser(userid.getEditText().getText().toString(), password.getEditText().getText().toString(),email.getEditText().getText().toString());
+                    Intent intent = new Intent(DrawerActivity.this, Login.class);
+                    intent.putExtra("userid", "anonymous");
+                    startActivity(intent);
+                }
+            });
+
+
         }
+
+
     }
 
     @Override
