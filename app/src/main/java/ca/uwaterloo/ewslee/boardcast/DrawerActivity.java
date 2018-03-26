@@ -71,16 +71,24 @@ public class DrawerActivity extends AppCompatActivity
         ArrayList<String[]> grades = gdbc.getRecent("norman");
         String[][] gradeTableInput = new String[grades.size()][2];
         int i = 0;
+        int pass = 0;
+        int fail = 0;
         for (String[] str : grades) {
             gradeTableInput[i][0] = str[0];
             gradeTableInput[i][1] = str[1];
+            String[] parts = str[1].split("/");
+            if(Integer.parseInt(parts[0]) > (Integer.parseInt(parts[1]) / 2)){
+                pass++;
+            }else{
+                fail++;
+            }
             i++;
         }
-        TextView mLogs = (TextView) findViewById(R.id.content_textView);
-        mLogs.setText("Connected");
 
         TableView<String[]> tableView = (TableView<String[]>) findViewById(R.id.tableView);
-        PieChart mPieChart = (PieChart) findViewById(R.id.piechart);
+        PieChart mPieChart = (PieChart) findViewById(R.id.contentPieChart);
+
+
 
         if(!getIntent().getStringExtra("userid").equals("anonymous")) {
             tableView.setDataAdapter(new SimpleTableDataAdapter(this, gradeTableInput));
@@ -89,8 +97,8 @@ public class DrawerActivity extends AppCompatActivity
             int colorOddRows = getResources().getColor(R.color.gray);
             tableView.setDataRowBackgroundProvider(TableDataRowBackgroundProviders.alternatingRowColors(colorEvenRows, colorOddRows));
 
-            mPieChart.addPieSlice(new PieModel("Correct", 1, Color.parseColor("#80ff80")));
-            mPieChart.addPieSlice(new PieModel("Wrong", 2, Color.parseColor("#FE6DA8")));
+            mPieChart.addPieSlice(new PieModel("Pass", pass, Color.parseColor("#80ff80")));
+            mPieChart.addPieSlice(new PieModel("Fail", fail, Color.parseColor("#FF5733")));
         }else{
             tableView.setVisibility(View.INVISIBLE);
             mPieChart.setVisibility(View.INVISIBLE);

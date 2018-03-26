@@ -36,4 +36,5 @@
     <string name="start_quiz">Start Quiz</string>
     <string name="user_id">User ID</string>
     <string name="password">Password</string>
+    <string name="email">Email</string>
 </resources>
