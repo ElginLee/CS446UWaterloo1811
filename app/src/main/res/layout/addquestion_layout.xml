@@ -81,23 +81,29 @@
 
                 <Button
                     android:id="@+id/clearButtonID"
+                    style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:backgroundTint="@color/colorAccent"
                     android:text="Clear" />
 
                 <Button
                     android:id="@+id/saveButtonID"
+                    style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:backgroundTint="@color/colorAccent"
                     android:text="Save Question" />
 
                 <Button
                     android:id="@+id/doneButtonID"
+                    style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:backgroundTint="@color/colorAccent"
                     android:text="Done Adding" />
 
             </LinearLayout>
