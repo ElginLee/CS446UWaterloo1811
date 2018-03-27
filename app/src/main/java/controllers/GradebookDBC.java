@@ -84,4 +84,40 @@ public class GradebookDBC implements GradebookDAO {
 
         return gradeList;
     }
+
+    public ArrayList<String[]> getQuizResult(String userid, int pos){
+        ArrayList<String[]> output = new ArrayList<String[]>();
+
+        try {
+            URL url = new URL(address + "/select_gradebook_specific.php?userid=" + userid + "&pos=" + pos);
+            String parameters = "userid=" + userid + "&pos=" + pos;
+            String data = URLEncoder.encode(parameters, "UTF-8");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.connect();
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(data);
+            InputStream stream = conn.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String decodedString;
+            String response = "";
+            while ((decodedString = in.readLine()) != null) response = decodedString;
+            in.close();
+
+            String results[] = response.split(";");
+            for(int i = 0; i < results.length - 6; i+=6){
+                String temp[] = {results[i], results[i+1], results[i+2], results[i+3], results[i+4], results[i+5]};
+                output.add(temp);
+            }
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return output;
+    }
 }

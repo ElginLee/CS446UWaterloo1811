@@ -9,4 +9,5 @@ import java.util.ArrayList;
 public interface GradebookDAO {
     public ArrayList<String[]> getRecent(String userid);
     public int getID(String userid, int pos);
+    public ArrayList<String[]> getQuizResult(String userid, int pos);
 }

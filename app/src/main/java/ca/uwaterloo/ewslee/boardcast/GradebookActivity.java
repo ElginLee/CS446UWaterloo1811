@@ -29,6 +29,7 @@ import controllers.QuestionDBC;
 public class GradebookActivity extends AppCompatActivity {
 
     private ListView gradebookList;
+    ArrayList<String[]> list;
     GradebookDAO gdbc;
     String loginUser = "anonymous";
 
@@ -44,7 +45,7 @@ public class GradebookActivity extends AppCompatActivity {
 
     private void generateList(){
         gradebookList = (ListView) findViewById(R.id.gradebook_listview);
-        ArrayList<String[]> list = gdbc.getRecent(loginUser);
+        list = gdbc.getRecent(loginUser);
         ArrayList<String> grades = new ArrayList<String>();
         grades.add("All Grades");
         for(int i = 0; i < list.size(); i++){
@@ -105,6 +106,73 @@ public class GradebookActivity extends AppCompatActivity {
                     }
                 }
                 else{
+
+                    ArrayList<String[]> output;
+                    output = gdbc.getQuizResult(loginUser, i-1);
+
+                    try{
+                        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), loginUser + list.get(i)[0] + ".pdf");
+                        file.createNewFile();
+                        FileOutputStream fOut = new FileOutputStream(file);
+
+                        PdfDocument document = new PdfDocument();
+                        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(100,150,1).create();
+                        PdfDocument.Page page = document.startPage(pageInfo);
+                        Canvas canvas = page.getCanvas();
+                        Paint paint = new Paint();
+                        paint.setTextSize(2);
+                        paint.setLetterSpacing(0.5f);
+
+                        int x = 10, y = 10;
+                        String res = "User: " + loginUser + "\n";
+                        canvas.drawText(res, x, y, paint);
+                        res = list.get(i)[0];
+                        y += 5;
+                        canvas.drawText(res, x, y, paint);
+                        res = "Score: " + list.get(i)[1];
+                        y += 5;
+                        canvas.drawText(res, x, y, paint);
+                        y += 3;
+                        for(int j = 0; j < output.size(); j++){
+                            y += 6;
+                            res = "Question " + (j+1) + ":";
+                            canvas.drawText(res, x, y, paint);
+                            y += 3;
+                            res = output.get(j)[0];
+                            canvas.drawText(res, x, y, paint);
+                            y += 3;
+                            res = "(1) " + output.get(j)[1];
+                            canvas.drawText(res, x, y, paint);
+                            y += 3;
+                            res = "(2) " + output.get(j)[2];
+                            canvas.drawText(res, x, y, paint);
+                            y += 3;
+                            res = "(3) " + output.get(j)[3];
+                            canvas.drawText(res, x, y, paint);
+                            y += 3;
+                            res = "(4) " + output.get(j)[4];
+                            canvas.drawText(res, x, y, paint);
+                            y += 3;
+                            res = "Your answer: " + output.get(j)[5];
+                            canvas.drawText(res, x, y, paint);
+                        }
+
+                        document.finishPage(page);
+                        document.writeTo(fOut);
+                        document.close();
+
+                        Intent target = new Intent(Intent.ACTION_VIEW);
+                        target.setDataAndType(Uri.fromFile(file),"application/pdf");
+                        target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                        Intent intent = Intent.createChooser(target, "Open File");
+                        startActivity(intent);
+                    }catch(IOException e) {
+                        Log.i("error", e.getLocalizedMessage() + getFilesDir().getAbsolutePath());
+                    }catch(ActivityNotFoundException e){
+                        Log.i("error", e.getLocalizedMessage());
+                    }
+
                 }
             }
         });
