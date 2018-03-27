@@ -71,7 +71,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainMenuActivity.this, QuestionActivity.class));
+                startActivity(new Intent(MainMenuActivity.this, QuestionCreationActivity.class));
             }
         });
     }

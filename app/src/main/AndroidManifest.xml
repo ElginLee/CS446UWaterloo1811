@@ -32,6 +32,7 @@
         <activity android:name=".ResponseGraphActivity"></activity>
         <activity android:name=".tempActivity" />
         <activity android:name=".QuestionActivity"></activity>
+        <activity android:name=".QuestionCreationActivity"></activity>
     </application>
 
 </manifest>

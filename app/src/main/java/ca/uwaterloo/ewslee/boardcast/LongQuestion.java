@@ -5,14 +5,14 @@ package ca.uwaterloo.ewslee.boardcast;
  */
 
 public class LongQuestion extends Question {
-    private int maxMarks;
+    private String answer;
 
-    public LongQuestion (int sessionID, String questionText, int maxMarks) {
+    public LongQuestion (int sessionID, String questionText, String answer) {
         super(sessionID, questionText);
-        this.maxMarks = maxMarks;
+        this.answer = answer;
     }
 
     public String getQuestionDisplay() {
-        return this.getQuestionText() + " [" + maxMarks + "]\n\n";
+        return this.getQuestionText() + "\n\nCorrect Answer: " + answer;
     }
 }
