@@ -105,4 +105,33 @@ public class MCQuestion extends Question {
             response.insertResponseDatabase(sessionID,getQuestionID());
         }
     }
+
+    public String getPDFQuestion(){
+        StringBuilder sb = new StringBuilder();
+        int correctOption=0;
+        sb.append(this.getQuestionText()+"~");
+        for (int i = 0; i < answerList.size(); i++) {
+            sb.append("("+(i+1)+") "+this.answerList.get(i).getAnswerText());
+            if( this.answerList.get(i).isCorrect()){
+                sb.append(" (Correct)|");
+                correctOption=i;
+            }
+            else{
+                sb.append("|");
+            }
+        }
+
+        int[] result = calculateResults();
+        int wrong = 0;
+        int correct = 0;
+        for(int x = 0; x < result.length; x ++){
+            if(x==correctOption){
+                correct = result[x];
+            }
+            else
+                wrong += result[x];
+        }
+        sb.append("~"+correct+"/"+wrong);
+        return sb.toString();
+    }
 }

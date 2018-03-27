@@ -455,7 +455,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
 
     private void configureEndButton(){
         Button startBtn = (Button) findViewById(R.id.startBtn);
-        startBtn.setText("Finish");
+        startBtn.setText("Save & Finish");
         startBtn.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -464,6 +464,13 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                 if(saveResponse){
                     insertIntoDatabase();
                 }
+                Question currentQuestion;
+                ArrayList <String> pdfData = new ArrayList<String>();
+                for(int i =0; i< session.getQuestionSize(); i++){
+                    currentQuestion = session.getQuestion(i);
+                    pdfData.add(currentQuestion.getPDFQuestion());
+                }
+                //pass data to pdf
                 Intent intent = new Intent(HostSessionActivity.this,DrawerActivity.class);
                 intent.putExtra("userid", id);
                 startActivity(intent);

@@ -52,4 +52,15 @@ public class LongQuestion extends Question {
             response.insertResponseDatabase(sessionID,getQuestionID());
         }
     }
+
+    public String getPDFQuestion(){
+        StringBuilder sb = new StringBuilder();
+        int correctOption=0;
+        sb.append(this.getQuestionText()+"~"+"(Answer)"+answer+"~");
+
+        int[] result = calculateResults();
+
+        sb.append(result[0]+"/"+result[1]);
+        return sb.toString();
+    }
     }
