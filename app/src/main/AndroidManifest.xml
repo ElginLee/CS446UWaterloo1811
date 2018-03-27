@@ -24,14 +24,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainMenuActivity"></activity>
-        <activity android:name=".HostSessionActivity"></activity>
-        <activity android:name=".JoinSessionActivity"></activity>
-        <activity android:name=".DrawingBoard"></activity>
-        <activity android:name=".WaitingScreenActivity"></activity>
-        <activity android:name=".ResponseGraphActivity"></activity>
-        <activity android:name=".tempActivity" />
-        <activity android:name=".QuestionActivity"></activity>
+        <activity android:name=".MainMenuActivity" />
+        <activity android:name=".HostSessionActivity" />
+        <activity android:name=".JoinSessionActivity" />
+        <activity android:name=".DrawingBoard" />
+        <activity android:name=".ResponseGraphActivity" />
+        <activity android:name=".QuestionActivity" />
+        <activity android:name=".GradebookActivity"></activity>
+        <activity android:name=".DrawerActivity"></activity>
         <activity android:name=".QuestionCreationActivity"></activity>
     </application>
 

@@ -23,7 +23,7 @@ public class QuestionActivity extends AppCompatActivity {
             }
             session.addQuestion(mcq);
         }
-        session.addQuestion(new LongQuestion(session.getSessionID(), "Long Question Text", ""));
+        session.addQuestion(new LongQuestion(session.getSessionID(), "Long Question Text", "123"));
 
         QuestionAdapter adapter = new QuestionAdapter(this, session.getQuestions());
 

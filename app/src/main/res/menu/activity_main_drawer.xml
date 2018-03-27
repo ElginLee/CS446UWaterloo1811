@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_host"
+            android:icon="@drawable/ic_account_group_black_48dp"
+            android:title="Host Session"/>
+        <item
+            android:id="@+id/nav_join"
+            android:icon="@drawable/ic_account_multiple_plus_black_48dp"
+            android:title="Join Session"/>
+        <item
+            android:id="@+id/nav_edit"
+            android:icon="@drawable/ic_table_edit_black_48dp"
+            android:title="Edit Quiz"/>
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Gradebook"/>
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share"/>
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send"/>
+        </menu>
+    </item>
+
+</menu>

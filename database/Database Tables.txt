@@ -1,0 +1,6 @@
+************USER TABLE***********
+CREATE TABLE sql9226735.User(
+userid VARCHAR(26) PRIMARY KEY,
+password VARCHAR(26)
+)
+*********************************

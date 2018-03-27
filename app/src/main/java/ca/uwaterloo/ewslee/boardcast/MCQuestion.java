@@ -1,6 +1,10 @@
 package ca.uwaterloo.ewslee.boardcast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import controllers.QuestionDBC;
+import controllers.StudentAnswerDBC;
 
 /**
  * Created by Harold on 20-Mar-18.
@@ -9,6 +13,7 @@ import java.util.ArrayList;
 public class MCQuestion extends Question {
     private ArrayList<MCAnswer> answerList;
     private int nextAnswerID;
+
 
     public MCQuestion (int sessionID, String questionText) {
         super(sessionID, questionText);
@@ -54,5 +59,49 @@ public class MCQuestion extends Question {
             sb.append((i + 1) + ". " + this.answerList.get(i).getAnswerText() + " " + this.answerList.get(i).isCorrect() + ((i == answerList.size() - 1) ? "" : "\n"));
         }
         return sb.toString();
+    }
+
+    public String getStudentQuestion(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("[QM]="+this.getQuestionText());
+        for (int i = 0; i < answerList.size(); i++) {
+            sb.append("/" + this.answerList.get(i).getAnswerText());
+        }
+        return sb.toString();
+    }
+
+    public int[] calculateResults(){
+        int[] result = new int[answerList.size()];
+        Arrays.fill(result, 0);
+        for(StudentAnswer ans: studentResponse){
+           result[Integer.parseInt(ans.getResponse())-1] += 1;
+        }
+        return result;
+    }
+
+    public String getCorrectAnswer(){
+        for(MCAnswer answer: answerList){
+            if(answer.isCorrect()){
+                return (Integer.toString(answer.getAnswerID()));
+            }
+        }
+        return null;
+    }
+
+    public void insertQuestionAnswer(int sessionID){
+        QuestionDBC qDBC = new QuestionDBC();
+
+        int answer =0;
+        String[] choice = new String[4];
+        for (int i = 0; i < answerList.size(); i++) {
+            choice[i]= this.answerList.get(i).getAnswerText();
+            if (this.answerList.get(i).isCorrect()){
+                answer = i+1;
+            }
+        }
+        qDBC.insertQuestion(getQuestionID(),sessionID,getQuestionText(),choice[0],choice[1],choice[2],choice[3],answer);
+        for(StudentAnswer response: studentResponse){
+            response.insertResponseDatabase(sessionID,getQuestionID());
+        }
     }
 }
