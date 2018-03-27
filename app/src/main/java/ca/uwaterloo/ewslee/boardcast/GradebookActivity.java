@@ -88,7 +88,6 @@ public class GradebookActivity extends AppCompatActivity {
                             canvas.drawText(res, x, y, paint);
                         }
 
-                        canvas.drawText(res, 10, 10, paint);
                         document.finishPage(page);
                         document.writeTo(fOut);
                         document.close();
@@ -111,12 +110,12 @@ public class GradebookActivity extends AppCompatActivity {
                     output = gdbc.getQuizResult(loginUser, i-1);
 
                     try{
-                        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), loginUser + list.get(i)[0] + ".pdf");
+                        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), loginUser + list.get(i-1)[0] + ".pdf");
                         file.createNewFile();
                         FileOutputStream fOut = new FileOutputStream(file);
 
                         PdfDocument document = new PdfDocument();
-                        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(100,150,1).create();
+                        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(100,250,1).create();
                         PdfDocument.Page page = document.startPage(pageInfo);
                         Canvas canvas = page.getCanvas();
                         Paint paint = new Paint();
@@ -126,10 +125,10 @@ public class GradebookActivity extends AppCompatActivity {
                         int x = 10, y = 10;
                         String res = "User: " + loginUser + "\n";
                         canvas.drawText(res, x, y, paint);
-                        res = list.get(i)[0];
+                        res = list.get(i-1)[0];
                         y += 5;
                         canvas.drawText(res, x, y, paint);
-                        res = "Score: " + list.get(i)[1];
+                        res = "Score: " + list.get(i-1)[1];
                         y += 5;
                         canvas.drawText(res, x, y, paint);
                         y += 3;

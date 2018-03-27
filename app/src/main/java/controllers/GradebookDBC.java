@@ -107,7 +107,7 @@ public class GradebookDBC implements GradebookDAO {
             in.close();
 
             String results[] = response.split(";");
-            for(int i = 0; i < results.length - 6; i+=6){
+            for(int i = 0; i < results.length - 1; i+=6){
                 String temp[] = {results[i], results[i+1], results[i+2], results[i+3], results[i+4], results[i+5]};
                 output.add(temp);
             }
