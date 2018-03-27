@@ -1,8 +1,17 @@
 package controllers;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -119,5 +128,51 @@ public class GradebookDBC implements GradebookDAO {
         }
 
         return output;
+    }
+
+    public void generateReport(ArrayList<String> output, String sessionName){
+        try{
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), sessionName + "_report.pdf");
+            file.createNewFile();
+            FileOutputStream fOut = new FileOutputStream(file);
+
+            PdfDocument document = new PdfDocument();
+            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(100,250,1).create();
+            PdfDocument.Page page = document.startPage(pageInfo);
+            Canvas canvas = page.getCanvas();
+            Paint paint = new Paint();
+            paint.setTextSize(2);
+            paint.setLetterSpacing(0.5f);
+
+            int x = 10, y = 10;
+            String res = "Session Name: " + sessionName + "\n";
+            canvas.drawText(res, x, y, paint);
+            y += 5;
+            for(int j = 0; j < output.size(); j++){
+                String temp[] = output.get(j).split("~");
+                y += 6;
+                res = "Question " + (j+1) + ":";
+                canvas.drawText(res, x, y, paint);
+                y += 3;
+                canvas.drawText(temp[0], x, y, paint);
+                String[] temp2 = temp[1].split("|");
+                for(int n = 0; n < temp2.length; n++){
+                    y += 3;
+                    canvas.drawText(temp2[n], x, y, paint);
+                }
+                y += 3;
+                res = "Correct / Incorrect: " + temp[2];
+                canvas.drawText(res, x, y, paint);
+            }
+
+            document.finishPage(page);
+            document.writeTo(fOut);
+            document.close();
+
+        }catch(IOException e) {
+            Log.i("error", e.getLocalizedMessage());
+        }catch(ActivityNotFoundException e){
+            Log.i("error", e.getLocalizedMessage());
+        }
     }
 }
