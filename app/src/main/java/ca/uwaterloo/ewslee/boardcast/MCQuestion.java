@@ -56,9 +56,8 @@ public class MCQuestion extends Question {
         StringBuilder sb = new StringBuilder();
         sb.append(this.getQuestionText() + "\n\n");
         for (int i = 0; i < answerList.size(); i++) {
-            sb.append((i + 1) + ". " + this.answerList.get(i).getAnswerText() + " " + this.answerList.get(i).isCorrect() + "\n");
+            sb.append((i + 1) + ". " + this.answerList.get(i).getAnswerText() + " " + this.answerList.get(i).isCorrect() + ((i == answerList.size() - 1) ? "" : "\n"));
         }
-        sb.append("\n");
         return sb.toString();
     }
 

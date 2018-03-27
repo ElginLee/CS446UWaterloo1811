@@ -18,7 +18,7 @@ public class LongQuestion extends Question {
     }
 
     public String getQuestionDisplay() {
-        return this.getQuestionText() + "\n\n";
+        return this.getQuestionText() + "\n\nCorrect Answer: " + answer;
     }
 
     public String getStudentQuestion() {
