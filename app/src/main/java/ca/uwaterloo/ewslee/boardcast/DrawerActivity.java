@@ -89,7 +89,7 @@ public class DrawerActivity extends AppCompatActivity
         configureDisplayID();
 
         GradebookDAO gdbc = new GradebookDBC();
-        ArrayList<String[]> grades = gdbc.getRecent("norman");
+        ArrayList<String[]> grades = gdbc.getRecent(getIntent().getStringExtra("userid"));
         String[][] gradeTableInput = new String[grades.size()][2];
         int i = 0;
         int pass = 0;

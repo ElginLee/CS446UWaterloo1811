@@ -10,11 +10,12 @@
     <TextView
         android:id="@+id/listOfStudent"
         android:layout_width="wrap_content"
-        android:layout_height="17dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="28dp"
-        android:text="Student in session :"
+        android:text="Students in session :"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,11 +23,10 @@
 
     <ListView
         android:id="@+id/StudentConnectionList"
-        android:layout_width="368dp"
+        android:layout_width="match_parent"
         android:layout_height="400dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/colorDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,15 +43,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/StudentConnectionList" />
 
-    <Button android:id="@+id/startBtn"
+    <Button
+        android:id="@+id/startBtn"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start Quiz"
-        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:backgroundTint="@color/colorPrimary"
+        android:text="Start Quiz"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/totalSize" />
 </android.support.constraint.ConstraintLayout>
