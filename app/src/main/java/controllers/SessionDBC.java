@@ -17,7 +17,7 @@ import java.net.URLEncoder;
  */
 
 public class SessionDBC implements SessionDAO {
-    static String address = "http://192.168.0.18";
+    static String address = "http://gknyeo.000webhostapp.com/";
 
     public int insertSession(String sessionName, String creatorID){
         try {

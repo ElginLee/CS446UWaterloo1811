@@ -27,7 +27,7 @@ import java.util.ArrayList;
  */
 
 public class GradebookDBC implements GradebookDAO {
-    static String address = "http://192.168.0.18";
+    static String address = "http://gknyeo.000webhostapp.com/";
 
     public int getID(String userid, int pos){
         try {

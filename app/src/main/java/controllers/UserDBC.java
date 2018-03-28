@@ -22,7 +22,7 @@ import java.net.URLEncoder;
  */
 
 public class UserDBC implements UserDAO{
-    static String address = "http://192.168.0.18";
+    static String address = "http://gknyeo.000webhostapp.com/";
 
     public boolean login(String userid, String password){
         try {
