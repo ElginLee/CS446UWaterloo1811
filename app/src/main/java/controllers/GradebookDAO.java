@@ -11,4 +11,5 @@ public interface GradebookDAO {
     public int getID(String userid, int pos);
     public ArrayList<String[]> getQuizResult(String userid, int pos);
     public void generateReport(ArrayList<String> output, String sessionName);
+    public void updateGradebook(int sessionID);
 }

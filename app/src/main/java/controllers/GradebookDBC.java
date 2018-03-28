@@ -116,8 +116,8 @@ public class GradebookDBC implements GradebookDAO {
             in.close();
 
             String results[] = response.split(";");
-            for(int i = 0; i < results.length - 1; i+=6){
-                String temp[] = {results[i], results[i+1], results[i+2], results[i+3], results[i+4], results[i+5]};
+            for(int i = 0; i < results.length - 1; i+=3){
+                String temp[] = {results[i], results[i+1], results[i+2]};
                 output.add(temp);
             }
 
@@ -173,6 +173,32 @@ public class GradebookDBC implements GradebookDAO {
             Log.i("error", e.getLocalizedMessage());
         }catch(ActivityNotFoundException e){
             Log.i("error", e.getLocalizedMessage());
+        }
+    }
+
+    public void updateGradebook(int sessionID){
+        try {
+            URL url = new URL(address + "/updateGradebook.php?sessionid=" + sessionID);
+            String parameters = "sessionid=" + sessionID;
+            String data = URLEncoder.encode(parameters, "UTF-8");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.connect();
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(data);
+            InputStream stream = conn.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String decodedString;
+            String response = "";
+            while ((decodedString = in.readLine()) != null) response = decodedString;
+            in.close();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

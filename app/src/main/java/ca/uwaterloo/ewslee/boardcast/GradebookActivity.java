@@ -69,7 +69,7 @@ public class GradebookActivity extends AppCompatActivity {
                         FileOutputStream fOut = new FileOutputStream(file);
 
                         PdfDocument document = new PdfDocument();
-                        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(100,150,1).create();
+                        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(100,250,1).create();
                         PdfDocument.Page page = document.startPage(pageInfo);
                         Canvas canvas = page.getCanvas();
                         Paint paint = new Paint();
@@ -139,20 +139,14 @@ public class GradebookActivity extends AppCompatActivity {
                             y += 3;
                             res = output.get(j)[0];
                             canvas.drawText(res, x, y, paint);
+                            String ans[] = output.get(j)[1].split("~");
+                            for(int k = 0; k < ans.length; k++){
+                                y += 3;
+                                res = ans[k];
+                                canvas.drawText(res, x, y, paint);
+                            }
                             y += 3;
-                            res = "(1) " + output.get(j)[1];
-                            canvas.drawText(res, x, y, paint);
-                            y += 3;
-                            res = "(2) " + output.get(j)[2];
-                            canvas.drawText(res, x, y, paint);
-                            y += 3;
-                            res = "(3) " + output.get(j)[3];
-                            canvas.drawText(res, x, y, paint);
-                            y += 3;
-                            res = "(4) " + output.get(j)[4];
-                            canvas.drawText(res, x, y, paint);
-                            y += 3;
-                            res = "Your answer: " + output.get(j)[5];
+                            res = "Your answer: " + output.get(j)[2];
                             canvas.drawText(res, x, y, paint);
                         }
 
