@@ -13,7 +13,7 @@
         <item
             android:id="@+id/nav_edit"
             android:icon="@drawable/ic_table_edit_black_48dp"
-            android:title="Edit Quiz"/>
+            android:title="Create Quiz"/>
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"

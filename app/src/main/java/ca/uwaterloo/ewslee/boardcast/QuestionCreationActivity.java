@@ -18,13 +18,14 @@ import java.util.ArrayList;
  */
 
 public class QuestionCreationActivity extends AppCompatActivity {
+    String id;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addquestion_layout);
 
-        final ArrayList<Question> questionList = new ArrayList<>();
+        final Session session = new Session();
         final ArrayList<String> questionDisplayList = new ArrayList<>();
-
+        id = getIntent().getStringExtra("userid");
         final EditText questionTextTextBox = (EditText) findViewById(R.id.questionTextTextBoxID);
         final EditText answerTextTextBox1 = (EditText) findViewById(R.id.answerTextTextBox1ID);
         final EditText answerTextTextBox2 = (EditText) findViewById(R.id.answerTextTextBox2ID);
@@ -92,12 +93,12 @@ public class QuestionCreationActivity extends AppCompatActivity {
                         mcq.addAnswer(answerTextTextBox2.getText().toString(), correctAnswerSpinner.getSelectedItemPosition() == 1);
                         mcq.addAnswer(answerTextTextBox3.getText().toString(), correctAnswerSpinner.getSelectedItemPosition() == 2);
                         mcq.addAnswer(answerTextTextBox4.getText().toString(), correctAnswerSpinner.getSelectedItemPosition() == 3);
-                        questionList.add(mcq);
+                        session.addQuestion(mcq);
                         questionDisplayList.add(0, mcq.getQuestionDisplay());
                         break;
                     case 1:
                         LongQuestion longq = new LongQuestion(0, questionTextTextBox.getText().toString(), answerTextTextBox1.getText().toString());
-                        questionList.add(longq);
+                        session.addQuestion(longq);
                         questionDisplayList.add(0, longq.getQuestionDisplay());
                         break;
                     default:
@@ -117,7 +118,8 @@ public class QuestionCreationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(QuestionCreationActivity.this, DrawerActivity.class);
-                intent.putExtra("questionList", questionList);
+                intent.putExtra("userid", id);
+                intent.putExtra("Session",session);
                 startActivity(intent);
             }
         });

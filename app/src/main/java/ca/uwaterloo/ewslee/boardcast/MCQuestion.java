@@ -112,11 +112,11 @@ public class MCQuestion extends Question {
         for (int i = 0; i < answerList.size(); i++) {
             sb.append("("+(i+1)+") "+this.answerList.get(i).getAnswerText());
             if( this.answerList.get(i).isCorrect()){
-                sb.append(" (Correct)|");
+                sb.append(" (Correct);");
                 correctOption=i;
             }
             else{
-                sb.append("|");
+                sb.append(";");
             }
         }
 

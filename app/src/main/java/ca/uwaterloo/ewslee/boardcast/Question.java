@@ -1,5 +1,6 @@
 package ca.uwaterloo.ewslee.boardcast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
  * Created by Harold on 20-Mar-18.
  */
 
-public abstract class Question {
+public abstract class Question implements Serializable {
     private int questionID;
     private int sessionID;
     private String questionText;

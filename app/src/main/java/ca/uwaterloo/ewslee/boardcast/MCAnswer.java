@@ -1,10 +1,12 @@
 package ca.uwaterloo.ewslee.boardcast;
 
+import java.io.Serializable;
+
 /**
  * Created by Harold on 20-Mar-18.
  */
 
-public class MCAnswer {
+public class MCAnswer implements Serializable {
     private int answerID;
     private int questionID;
     private int sessionID;

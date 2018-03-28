@@ -1,5 +1,6 @@
 package ca.uwaterloo.ewslee.boardcast;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.eazegraph.lib.charts.PieChart;
 import org.eazegraph.lib.models.PieModel;
@@ -188,9 +190,21 @@ public class DrawerActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_host) {
-            Intent intent = new Intent(DrawerActivity.this,HostSessionActivity.class);
-            intent.putExtra("userid", loginUser);
-            startActivity(intent);
+            Intent intent = getIntent();
+            if(intent.hasExtra("Session")) {
+                Session session = (Session)intent.getSerializableExtra("Session");
+                intent = new Intent(DrawerActivity.this, HostSessionActivity.class);
+                intent.putExtra("Session", session);
+                intent.putExtra("userid", loginUser);
+                startActivity(intent);
+            }else{
+                Context context = getApplicationContext();
+                CharSequence text = "Please create question!";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            }
         } else if (id == R.id.nav_join) {
             Intent intent = new Intent(DrawerActivity.this, JoinSessionActivity.class);
             intent.putExtra("userid", loginUser);

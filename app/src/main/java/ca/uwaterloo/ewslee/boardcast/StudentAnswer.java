@@ -1,12 +1,14 @@
 package ca.uwaterloo.ewslee.boardcast;
 
+import java.io.Serializable;
+
 import controllers.StudentAnswerDBC;
 
 /**
  * Created by kianl on 3/25/2018.
  */
 
-public class StudentAnswer {
+public class StudentAnswer implements Serializable {
     private QuestionObserver student;
     private String answer;
 
