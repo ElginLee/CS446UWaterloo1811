@@ -472,6 +472,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                 notifyObservers("[E]="+session.getQuestionSize());
                 if(saveResponse){
                     insertIntoDatabase();
+
                 }
                 Question currentQuestion;
                 ArrayList <String> pdfData = new ArrayList<String>();
@@ -497,5 +498,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
          currentQuestion = session.getQuestion(i);
           currentQuestion.insertQuestionAnswer(sessionID);
         }
+        GradebookDBC gDBC = new GradebookDBC();
+        gDBC.updateGradebook(sessionID);
     }
 }
