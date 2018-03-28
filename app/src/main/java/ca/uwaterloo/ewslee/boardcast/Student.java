@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
  * Created by Elgin on 20/3/2018.
  */
 
-public class Student implements QuestionObserver{
+public class Student implements QuestionObserver {
     String deviceID;
     String studentID;
     public void sendMessage(String message, GoogleApiClient mGoogleApiClient){

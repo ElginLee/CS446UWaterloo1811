@@ -43,6 +43,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import controllers.GradebookDBC;
 import controllers.QuestionDBC;
 import controllers.SessionDBC;
 
@@ -66,7 +67,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                     Manifest.permission.ACCESS_COARSE_LOCATION,
             };
 
-    Session session = new Session(1, "test", "123");
+    Session session = new Session();
     private Utils u1 = new Utils();
     private String sessionName;
     private String id = "";
@@ -75,16 +76,22 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.host_main);
-        configureHostButton();
+        Intent intent = getIntent();
+        session = (Session)intent.getSerializableExtra("Session");
         id = getIntent().getStringExtra("userid");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        configureHostButton();
         //qn from harold
-        mockQn();
+        //mockQn();
     }
 
     private void configureHostButton(){
         Button hostBtn = (Button) findViewById(R.id.hostBtn);
+        CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox);
+        if(id.equals("anonymous")){
+            checkBox.setVisibility(View.INVISIBLE);
+        }
         hostBtn.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -94,7 +101,10 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                 session.setName(sessionName);
                 session.setCreatorID(id);
                 CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox);
-                saveResponse = checkBox.isChecked();
+
+                if(!id.equals("anonymous")){
+                    saveResponse = checkBox.isChecked();
+                }
                 startHosting();
                 mGoogleApiClient.connect();
                 setContentView(R.layout.waiting_screen);
@@ -311,14 +321,13 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
     int currentQn=0;
 
     private void mockQn(){
-         for (int i = 1; i <= 2; i++) {
-            MCQuestion mcq = new MCQuestion(session.getSessionID(), "Question " + i + " Text");
-            for (int j = 1; j <= 4; j++) {
-                mcq.addAnswer("Answer " + j, j == 3);
-            }
-            session.addQuestion(mcq);
-        }
-        session.addQuestion(new LongQuestion(session.getSessionID(), "Long Question Text", "123"));
+        MCQuestion mcq = new MCQuestion(session.getSessionID(), "What state is Waterloo in Canada?");
+        mcq.addAnswer("Ontario", true);
+        mcq.addAnswer("Quebec", false);
+        mcq.addAnswer("Nova Scotia", false);
+        mcq.addAnswer("Alberta", false);
+        session.addQuestion(mcq);
+        session.addQuestion(new LongQuestion(session.getSessionID(), "Name the seventh planet from the sun.", "Uranus"));
     }
 
     private void configureQuestionButton(){
@@ -470,6 +479,8 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                     currentQuestion = session.getQuestion(i);
                     pdfData.add(currentQuestion.getPDFQuestion());
                 }
+                GradebookDBC gDBC = new GradebookDBC();
+                gDBC.generateReport(pdfData,session.getName());
                 //pass data to pdf
                 Intent intent = new Intent(HostSessionActivity.this,DrawerActivity.class);
                 intent.putExtra("userid", id);
@@ -487,8 +498,4 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
           currentQuestion.insertQuestionAnswer(sessionID);
         }
     }
-
-
-
-
 }

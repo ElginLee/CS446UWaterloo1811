@@ -1,17 +1,22 @@
 package ca.uwaterloo.ewslee.boardcast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Harold on 20-Mar-18.
  */
 
-public class Session {
+public class Session implements Serializable {
     private int sessionID;
     private String name;
     private String creatorID;
     private ArrayList<Question> questionList;
     private int nextQuestionID;
+
+    public Session() {
+        this.questionList = new ArrayList<>();
+    }
 
     public Session(int sessionID, String name, String creatorID) {
         this.sessionID = sessionID;
@@ -48,6 +53,14 @@ public class Session {
         question.setQuestionID(nextQuestionID);
         questionList.add(question);
         nextQuestionID++;
+    }
+
+    public void setQuestionList(ArrayList<Question> questionList){
+        this.questionList = questionList;
+    }
+
+    public ArrayList<Question> getQuestionList(){
+        return questionList;
     }
 
     public void removeQuestion(int questionID) {

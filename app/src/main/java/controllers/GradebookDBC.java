@@ -155,7 +155,7 @@ public class GradebookDBC implements GradebookDAO {
                 canvas.drawText(res, x, y, paint);
                 y += 3;
                 canvas.drawText(temp[0], x, y, paint);
-                String[] temp2 = temp[1].split("|");
+                String[] temp2 = temp[1].split(";");
                 for(int n = 0; n < temp2.length; n++){
                     y += 3;
                     canvas.drawText(temp2[n], x, y, paint);
