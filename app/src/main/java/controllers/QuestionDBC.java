@@ -17,7 +17,7 @@ import java.net.URLEncoder;
  */
 
 public class QuestionDBC implements QuestionDAO {
-    static String address = "http://gknyeo.000webhostapp.com/";
+    static String address = "https://broadcastapplication.azurewebsites.net/broadcastphp";
 
     public void insertQuestion(int questionID,
                                int sessionID,

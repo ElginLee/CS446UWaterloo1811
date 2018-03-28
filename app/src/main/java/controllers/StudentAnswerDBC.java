@@ -17,7 +17,7 @@ import java.net.URLEncoder;
  */
 
 public class StudentAnswerDBC implements StudentAnswerDAO {
-    static String address = "http://gknyeo.000webhostapp.com/";
+    static String address = "https://broadcastapplication.azurewebsites.net/broadcastphp";
     public void insertRecord(String studentid, int sessionid, int questionid, String answerid){
         try {
             URL url = new URL(address + "/insert_studentanswer.php?studentid=" + studentid + "&sessionid=" + sessionid + "&questionid=" + questionid + "&answerid=" + answerid);
