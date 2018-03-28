@@ -114,7 +114,7 @@ public class JoinSessionActivity extends AppCompatActivity{
                                     long id) {
 
                 String item = ((TextView)view).getText().toString();
-                String[] itemSplit = item.split(" ");
+                String[] itemSplit = item.split("::");
                 //ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar2);
                 //pb.setVisibility(View.VISIBLE);
                 final RippleBackground rippleBackground=(RippleBackground)findViewById(R.id.content);
@@ -225,8 +225,8 @@ public class JoinSessionActivity extends AppCompatActivity{
         Nearby.Connections.startDiscovery(mGoogleApiClient, "ca.uwaterloo.ewslee.boardcast", new EndpointDiscoveryCallback() {
                     @Override
                     public void onEndpointFound(String endpointId, DiscoveredEndpointInfo info) {
-                        if(!connectionsList.contains(info.getEndpointName() + " " + endpointId)) {
-                            connectionsList.add(info.getEndpointName() + " " + endpointId);
+                        if(!connectionsList.contains(info.getEndpointName() + "::" + endpointId)) {
+                            connectionsList.add(info.getEndpointName() + "::" + endpointId);
                             arrayAdapter.notifyDataSetChanged();
                         }
                         //ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar2);

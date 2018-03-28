@@ -196,7 +196,9 @@ public class DrawerActivity extends AppCompatActivity
             intent.putExtra("userid", loginUser);
             startActivity(intent);
         } else if (id == R.id.nav_edit) {
-
+            Intent intent = new Intent(DrawerActivity.this, QuestionCreationActivity.class);
+            intent.putExtra("userid", loginUser);
+            startActivity(intent);
         } else if (id == R.id.nav_manage) {
             Intent intent = new Intent(DrawerActivity.this, GradebookActivity.class);
             intent.putExtra("userid", loginUser);

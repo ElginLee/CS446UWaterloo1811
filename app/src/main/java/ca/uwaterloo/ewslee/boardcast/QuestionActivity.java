@@ -15,7 +15,11 @@ public class QuestionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.questionlist_layout);
 
+<<<<<<< HEAD
         Session session = new Session(1, "test", "123");
+=======
+        Session session = new Session(1, "test", "1");
+>>>>>>> 7a504a05a8ea3225c6d5a2892f20485c617ff5e5
         for (int i = 1; i <= 10; i++) {
             MCQuestion mcq = new MCQuestion(session.getSessionID(), "Question " + i + " Text");
             for (int j = 1; j <= 4; j++) {
