@@ -205,6 +205,12 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                                     @Override
                                     public void onPayloadReceived(String endpointId, Payload payload) {
                                         if (payload.getType() == Payload.Type.BYTES) {
+                                            Context context = getApplicationContext();
+                                            CharSequence text = endpointId;
+                                            int duration = Toast.LENGTH_SHORT;
+
+                                            Toast toast = Toast.makeText(context, text, duration);
+                                            toast.show();
                                             receiveStatus(new String(payload.asBytes()), endpointId);
                                             Nearby.Connections.sendPayload(mGoogleApiClient, endpointId, Payload.fromBytes("ACK".getBytes(Charset.forName("UTF-8"))));
                                         }
@@ -310,6 +316,7 @@ public class HostSessionActivity extends AppCompatActivity implements QuestionSu
                 if(observer.getDeviceID().equals(deviceID))
                     student = observer;
             }
+
             Question currentQuestion = session.getQuestion(currentQn);
             StudentAnswer answer = new StudentAnswer(student,result[1]);
             currentQuestion.addStudentAnswer(answer);

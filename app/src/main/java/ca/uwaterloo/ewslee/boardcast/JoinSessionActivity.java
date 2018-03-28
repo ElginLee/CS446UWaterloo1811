@@ -309,6 +309,12 @@ public class JoinSessionActivity extends AppCompatActivity{
                     @Override
                     public void onDisconnected(String endpointId) {
                         // We've been disconnected from this endpoint. No more data can be sent or received.
+                        Context context = getApplicationContext();
+                        CharSequence text = "Disconnect";
+                        int duration = Toast.LENGTH_SHORT;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
                     }
                 })
                 .setResultCallback(new ResultCallback<Status>() {
@@ -349,6 +355,12 @@ public class JoinSessionActivity extends AppCompatActivity{
     }
 
     private void sendMessage(String message) {
+        Context context = getApplicationContext();
+        CharSequence text = mRemoteHostEndpoint;
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
         Nearby.Connections.sendPayload(mGoogleApiClient, mRemoteHostEndpoint, Payload.fromBytes(message.getBytes(Charset.forName("UTF-8"))));
     }
 
