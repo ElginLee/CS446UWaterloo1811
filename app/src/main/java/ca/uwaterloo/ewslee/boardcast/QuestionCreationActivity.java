@@ -1,5 +1,6 @@
 package ca.uwaterloo.ewslee.boardcast;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -108,6 +109,16 @@ public class QuestionCreationActivity extends AppCompatActivity {
                 answerTextTextBox4.setText("");
 
                 adapter.notifyDataSetChanged();
+            }
+        });
+
+        Button doneButton = (Button) findViewById(R.id.doneButtonID);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(QuestionCreationActivity.this, DrawerActivity.class);
+                intent.putExtra("questionList", questionList);
+                startActivity(intent);
             }
         });
     }
